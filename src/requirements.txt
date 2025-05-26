@@ -1,0 +1,10 @@
+# requirements.txt
+anthropic==0.25.0
+sqlite3
+tkinter
+subprocess
+json
+datetime
+os
+shutil
+re
