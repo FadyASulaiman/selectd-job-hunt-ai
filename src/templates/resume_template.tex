@@ -1,0 +1,72 @@
+% templates/resume_template.tex
+\documentclass[10pt,a4paper,ragged2e,withhyper]{altacv}
+
+\geometry{left=1.25cm,right=1.25cm,top=1.25cm,bottom=1.25cm,columnsep=1cm}
+\usepackage{paracol}
+
+\ifxetexorluatex
+  \setmainfont{Lato}
+\else
+  \usepackage[default]{lato}
+\fi
+
+\definecolor{VividPurple}{HTML}{105A92}
+\definecolor{SlateGrey}{HTML}{2E2E2E}
+\definecolor{LightGrey}{HTML}{666666}
+\colorlet{heading}{VividPurple}
+\colorlet{headingrule}{VividPurple}
+\colorlet{accent}{VividPurple}
+\colorlet{emphasis}{SlateGrey}
+\colorlet{body}{LightGrey}
+
+\renewcommand{\cvItemMarker}{{\small\textbullet}}
+\renewcommand{\cvRatingMarker}{\faCircle}
+
+\input{pubs-num.tex}
+
+\begin{document}
+
+\name{{{NAME}}}
+\tagline{Junior ML Engineer}
+
+\personalinfo{
+\email{{{EMAIL}}}
+\phone{{{PHONE}}}
+\github{{{GITHUB}}}
+\linkedin{{{LINKEDIN}}}
+}
+
+\makecvheader
+
+\begin{flushleft}
+{{EXECUTIVE_SUMMARY}}
+\end{flushleft}
+
+\AtBeginEnvironment{itemize}{\small}
+
+\cvsection{Notable ML Projects}
+{{PROJECT_EXPERIENCE}}
+
+\cvsection{Experience (SWE)}
+{{WORK_EXPERIENCE}}
+
+\renewcommand{\cvDateMarker}{}
+\columnratio{0.37}
+
+\begin{paracol}{2}
+
+\cvsection{Higher Education}
+{{EDUCATION}}
+
+\switchcolumn
+
+\cvsection{Skills}
+{{SKILLS}}
+
+\end{paracol}
+
+\vspace{0.2cm}
+{\large\color{black}\textbf{Courses \& Certifications:}}
+ML specialization, deep learning specialization (Coursera, 2024). RLHF LLM fine-tuning (Deeplearning.ai, 2025). EDA Tools, MLOps Concepts (Datacamp, 2024). Certified Ethical Hacker (EC-council, 2022).
+
+\end{document}
