@@ -50,7 +50,7 @@ class ClaudeLLM(LLMInterface):
         - location (string, if provided, otherwise "Not specified")
         - salary_range (string, if provided, otherwise "Not specified")
         - job_type (string, e.g., "Full-time", "Part-time", "Contract", or "Not specified")
-        - benefits (array of strings, if mentioned, otherwise empty array)
+        - benefits (string delimited by a slash)
         - country (string, if determinable, otherwise "Not specified")
 
         Job Description:
