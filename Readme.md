@@ -339,6 +339,7 @@ for app in applications:
 ### **Dependencies**
 ```txt
 anthropic>=0.25.0     # Claude API client
+openai               # OpenAI API client
 tkinter              # GUI framework (usually included with Python)
 sqlite3              # Database (included with Python)
 subprocess           # Process management (included with Python)
