@@ -76,6 +76,7 @@ class ClaudeLLM(LLMInterface):
     
     def generate_resume_content(self, job_description: str, user_data: dict) -> dict:
         """Generate tailored resume content"""
+        # Experiment with adding this line to prompt: The ultimate goal is to best position the candidate to be shortlisted for an interview
         system_prompt = f"""You are an elite career coach and resume expert specializing in ML/Data Science roles. You understand what recruiters look for and optimize resumes for both ATS systems and human reviewers.
 
 CRITICAL CONSTRAINTS:
