@@ -1,6 +1,6 @@
 # 🚀 Selectd Job Hunt AI
 
-*The no-BS open-source resume tailoring system fo True professionals*
+*The no-BS open-source resume tailoring system for Tech professionals*
 
 [[License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [[Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
@@ -23,7 +23,7 @@
 
 ## 🎯 Overview
 
-A production ready **AI Resume Tailoring System**, eliminates the tedious process of manually tailoring resumes for every job application. Built specifically for the Job hunt, this system leverages Claude 3.7-Sonnet's advanced reasoning capabilities to generate ATS-optimized, recruiter-friendly resumes and cover letters in seconds.
+A production ready **AI Resume Tailoring System**, eliminates the tedious process of manually tailoring resumes for every job application. Built specifically for the Job hunt, this system leverages Top of the line LLMs with advanced capabilities to generate ATS-optimized, recruiter-friendly resumes and cover letters in seconds.
 
 ### The Problem
 - Manual resume tailoring takes 30-45 minutes per application
@@ -42,15 +42,15 @@ A production ready **AI Resume Tailoring System**, eliminates the tedious proces
 
 ## 🏆 Why This System?
 
-### 🎯 **Built for True Professionals**
-Unlike generic resume builders, this system understands the nuances of roles in the specific field, specific terminology, and what recruiters in the field actually look for.
+### 🎯 **Built for Tech Professionals**
+Unlike generic resume builders, this system understands the nuances of roles in the tech field, tech jarggon, specific terminology, and what recruiters in the field actually look for.
 
 ### ⚡ **Lightning Fast Performance**
 - **Average generation time**: 15-20 seconds
 - **Smart caching**: Reuse optimized components across similar roles
 
 ### 🧠 **AI-Powered Intelligence**
-- **Claude 3.7 Sonnet integration**: State-of-the-art language model
+- **GPT 4.1, Gemini 2.5 Pro, Deepseek R1**: State-of-the-art language models
 - **ATS optimization**: Automatic keyword matching and scoring
 - **Context-aware tailoring**: Understands job requirements and company culture
 - **Constraint adherence**: Strict word limits, formatting rules, and content guidelines
