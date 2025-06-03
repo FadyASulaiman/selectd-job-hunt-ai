@@ -1,12 +1,26 @@
 # config/settings.py
 import os
-from datetime import datetime
+from dotenv import load_dotenv
+import os
 
 class Settings:
-    # API Configuration
-    CLAUDE_API_KEY = os.getenv('CLAUDE_API_KEY', '')
-    CLAUDE_MODEL = 'claude-3-5-sonnet-20241022'
+    load_dotenv("env/api_keys.env")
+
+    # Gemini API Configuration
+    GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
+    GEMINI_MODEL = 'gemini-2.5-pro'
+
+    # GPT API config
+    OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')
+    OPENAI_MODEL = 'gemini-2.5-pro'
     
+    # DeepSeek API config
+    DEEPSEEK_API_KEY = os.environ.get('DEEPSEEK_API_KEY', '')
+    DEEPSEEK_MODEL = 'deepseek-reasoner' # R1
+
+    # small model
+    SMALL_MODEL = 'GPT-4.1-nano'
+
     # Paths
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     DATA_DIR = os.path.join(BASE_DIR, 'data')

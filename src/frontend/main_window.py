@@ -9,7 +9,7 @@ class MainWindow:
     
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title("Resume Automation Tool")
+        self.root.title("AI Resume Generation Tool")
         self.root.geometry("800x600")
         
         self.generator = ResumeGenerator()
