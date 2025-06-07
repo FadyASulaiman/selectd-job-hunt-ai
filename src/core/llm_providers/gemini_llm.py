@@ -9,7 +9,7 @@ class GeminiLLM(LLMInterface):
 
     def __init__(self):
         
-        self.model_name = "gemini-2.5-pro"         
+        self.model_name = "gemini-2.5-flash-preview-04-17"
         self.client = genai.Client(api_key=Settings.GEMINI_API_KEY)
 
 
@@ -23,6 +23,7 @@ class GeminiLLM(LLMInterface):
                 system_instruction=system_prompt),
                 contents=user_prompt
                 )
+            print(response) # debug: remove
             
             return response.text
         except Exception as e:
@@ -49,9 +50,12 @@ class GeminiLLM(LLMInterface):
         """
         
         response = self._call_gemini(system_prompt, user_prompt)
+        print(response) # debug: remove
         try:
             # Clean the response to ensure valid JSON, as LLMs can sometimes include markdown.
             cleaned_response = response.strip()
+            if cleaned_response.startswith('```'):
+                cleaned_response = cleaned_response.split('\n', 1)[1].rsplit('\n', 1)[0]
             return json.loads(cleaned_response)
         except json.JSONDecodeError:
             return self._fallback_job_info()
