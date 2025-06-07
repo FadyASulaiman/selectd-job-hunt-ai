@@ -4,11 +4,11 @@ from dotenv import load_dotenv
 import os
 
 class Settings:
-    load_dotenv("env/api_keys.env")
+    load_dotenv("src/env/api_keys.env")
 
     # Gemini API Configuration
     GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
-    GEMINI_MODEL = 'gemini-2.5-pro'
+    GEMINI_MODEL = 'gemini-2.5-flash-preview-04-17'
 
     # GPT API config
     OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')
@@ -37,6 +37,9 @@ class Settings:
     MAX_BULLET_POINTS_FIRST_PROJECT = 3
     MAX_BULLET_POINTS_OTHER_PROJECTS = 2
     MAX_WORDS_PER_BULLET = 30
+
+    # LLM providers
+    SUPPORTED_PROVIDERS = ['claude', 'gpt4', 'gpt-4', 'openai', 'gemini', 'google', 'deepseek', 'deep-seek']
     
     # Ensure directories exist
     @classmethod
