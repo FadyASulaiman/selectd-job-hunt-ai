@@ -1,4 +1,5 @@
 import json
+from typing import Optional
 from google.genai import types
 from google import genai
 from config.settings import Settings
@@ -13,14 +14,16 @@ class GeminiLLM(LLMInterface):
         self.client = genai.Client(api_key=Settings.GEMINI_API_KEY)
 
 
-    def _call_gemini(self, system_prompt: str, user_prompt: str) -> str:
+    def _call_gemini(self, system_prompt: str, user_prompt: str, thinking_budget: Optional[int] = None) -> str:
         """Make API call to Gemini"""
         try:
-            
             response = self.client.models.generate_content(
                 model=self.model_name,
                 config=types.GenerateContentConfig(
-                system_instruction=system_prompt),
+                system_instruction=system_prompt,
+                    thinking_config=types.ThinkingConfig(
+                    thinking_budget=thinking_budget
+                    )),
                 contents=user_prompt
                 )
             print(response) # debug: remove
@@ -49,7 +52,7 @@ class GeminiLLM(LLMInterface):
         Return only the JSON object:
         """
         
-        response = self._call_gemini(system_prompt, user_prompt)
+        response = self._call_gemini(system_prompt, user_prompt, thinking_budget=0)
         print(response) # debug: remove
         try:
             # Clean the response to ensure valid JSON, as LLMs can sometimes include markdown.
