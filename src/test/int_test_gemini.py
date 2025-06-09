@@ -66,4 +66,5 @@ Paid vacation on your birthday
 
 # To run:
 # from the project's root: $ pytest -xvs src/test/int_test_gemini.py::TestIntegrationGeminiLLM::test_real_api_call
-# Average call to a flash/nano model consumes ~1500 tokens
+# Make sure env is set correctly: conda activate selectd_env
+# Average call to a flash/nano model consumes ~1100 tokens
