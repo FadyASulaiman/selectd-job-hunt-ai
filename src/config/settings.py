@@ -6,20 +6,20 @@ import os
 class Settings:
     load_dotenv("src/env/api_keys.env")
 
-    # Gemini API Configuration
-    GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
-    GEMINI_MODEL = 'gemini-2.5-flash-preview-04-17'
 
-    # GPT API config
-    OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')
-    OPENAI_MODEL = 'gemini-2.5-pro'
-    
-    # DeepSeek API config
-    DEEPSEEK_API_KEY = os.environ.get('DEEPSEEK_API_KEY', '')
-    DEEPSEEK_MODEL = 'deepseek-reasoner' # R1
+    # LLM API config
+    MODEL_PROVIDERS = {
+        "openai": {"model":"GPT-4.1", "key": os.environ.get('OPENAI_API_KEY', '')}, 
+        "google": {"model": "gemini-2.5-flash-preview-04-17", "key": os.environ.get('GEMINI_API_KEY', '')},
+        "deepseek": {"model":"deepseek-reasoner", "key": os.environ.get('DEEPSEEK_API_KEY', '')},
+        "small_model": {"model": "gemini-2.5-flash-preview-04-17", "key": os.environ.get('GEMINI_API_KEY', '')} }
 
     # small model
-    SMALL_MODEL = 'GPT-4.1-nano'
+    SMALL_MODEL_PROVIDER = "google" # alt: openai - GPT-4.1-nano
+    SMALL_MODEL = "gemini-2.5-flash-preview-04-17"
+
+    # default
+    DEFAULT_LLM_PROVIDER = "openai"
 
     # Paths
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
