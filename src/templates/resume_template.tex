@@ -1,4 +1,3 @@
-% templates/resume_template.tex
 \documentclass[10pt,a4paper,ragged2e,withhyper]{altacv}
 
 \geometry{left=1.25cm,right=1.25cm,top=1.25cm,bottom=1.25cm,columnsep=1cm}
@@ -26,47 +25,78 @@
 
 \begin{document}
 
-\name{{{NAME}}}
-\tagline{Junior ML Engineer}
+\name{{{name}}}
+\tagline{{{professional_title}}}
 
 \personalinfo{
-\email{{{EMAIL}}}
-\phone{{{PHONE}}}
-\github{{{GITHUB}}}
-\linkedin{{{LINKEDIN}}}
+\email{{{email}}}
+\phone{{{phone}}}
+\github{{{github_link}}}
+\linkedin{{{linkedin_link}}}
+{{#personal_website}}\homepage{{{personal_website}}}{{/personal_website}}
 }
 
 \makecvheader
 
 \begin{flushleft}
-{{EXECUTIVE_SUMMARY}}
+{{executive_summary}}
 \end{flushleft}
 
 \AtBeginEnvironment{itemize}{\small}
 
 \cvsection{Notable ML Projects}
-{{PROJECT_EXPERIENCE}}
 
-\cvsection{Experience (SWE)}
-{{WORK_EXPERIENCE}}
+{{#projects}}
+\cvevent{}{{{project_title}}}{}{}
+{{#project_links}}
+\cvtag{{{name}}: \href{{{link}}}{{{link}}}}
+{{/project_links}}
+\begin{itemize}
+{{#project_description}}
+    \item {{.}}
+{{/project_description}}
+\end{itemize}
+
+{{/projects}}
+
+\cvsection{Experience}
+
+{{#work_experience}}
+\cvevent{{{role_title}}}{{{company_name}}}{{{working_from}} -- {{#working_to}}{{working_to}}{{/working_to}}{{^working_to}}Present{{/working_to}}}{{{company_location}}}
+\begin{itemize}
+{{#experience}}
+    \item {{.}}
+{{/experience}}
+\end{itemize}
+
+{{/work_experience}}
 
 \renewcommand{\cvDateMarker}{}
+
 \columnratio{0.37}
 
 \begin{paracol}{2}
 
 \cvsection{Higher Education}
-{{EDUCATION}}
+
+{{#education}}
+\cvevent{{{degree_name}} [{{studied_from}} -- {{#studied_to}}{{studied_to}}{{/studied_to}}{{^studied_to}}Present{{/studied_to}}]}{{{institution_name}}{{#honors}}\\• [{{honors}}]{{/honors}}}{}{}{} 
+
+{{/education}}
 
 \switchcolumn
 
 \cvsection{Skills}
-{{SKILLS}}
+\begin{itemize}
+{{#skills}}
+    \item \textbf{{{category}}:} {{skills_list}}.
+{{/skills}}
+\end{itemize}
 
 \end{paracol}
 
 \vspace{0.2cm}
 {\large\color{black}\textbf{Courses \& Certifications:}}
-ML specialization, deep learning specialization (Coursera, 2024). RLHF LLM fine-tuning (Deeplearning.ai, 2025). EDA Tools, MLOps Concepts (Datacamp, 2024). Certified Ethical Hacker (EC-council, 2022).
+{{certifications}}
 
 \end{document}
