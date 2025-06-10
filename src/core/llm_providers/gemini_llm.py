@@ -3,14 +3,14 @@ from typing import Optional
 from google.genai import types
 from google import genai
 from config.settings import Settings
-from core.llm_interface import LLMInterface
+from core.llm_providers.llm_interface import LLMInterface
 
 class GeminiLLM(LLMInterface):
     """Gemini API implementation"""
 
-    def __init__(self):
+    def __init__(self, model: str):
         
-        self.model_name = "gemini-2.5-flash-preview-04-17"
+        self.model_name = model
         self.client = genai.Client(api_key=Settings.GEMINI_API_KEY)
 
 

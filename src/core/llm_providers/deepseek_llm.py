@@ -2,17 +2,17 @@ import json
 import time
 import openai
 from config.settings import Settings
-from core.llm_interface import LLMInterface
+from core.llm_providers.llm_interface import LLMInterface
 
 
 class DeepSeekLLM(LLMInterface):
     """DeepSeek R1 implementation using OpenAI-compatible SDK"""
     
-    def __init__(self):
+    def __init__(self, model: str):
         
         openai.base_url = "https://api.deepseek.com/v1"
-        openai.api_key = Settings.DEEPSEEK_API_KEY
-        self.model = Settings.DEEPSEEK_MODEL
+        openai.api_key = Settings.MODEL_PROVIDERS["deepseek"]["key"]
+        self.model = model 
         self.max_retries = 3
         self.max_tokens = 3000
     
