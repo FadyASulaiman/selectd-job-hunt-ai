@@ -10,7 +10,13 @@ Jun 7 2025
 - Unit & integration tests created & passed.
 - Tested models: Gemini-2.5-Pro and Gemini-2.5-flash. Test focus: GeminiLLM class.
 
-Jun 8 2025
+Jun 9 2025
 - Created a dropdown for LLM choice (GPT-4.1, Gemini-2.5-Pro, DeepSeek) and mapped user's choice to submit function.
 - Improved prompts.
 - Configuring thinking/resume budget for gemini models
+
+Jun 10 2025
+- Converted LaTex template to jinja2 template
+- Updated resume generator and latex processor to handle the new template
+- Added json schema validator for user data (processed and returned from the LLM)
+- Add dynamic model selection to ResumeGenerator class, mapping resume & cover letter creation to main models and detail extraction to small (flash/nano) models. Plus, updating MODEL_PROVIDER map in settings for dynamic selection.
