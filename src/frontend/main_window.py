@@ -12,11 +12,9 @@ class MainWindow:
         self.root.title("AI Resume Tailor")
         self.root.geometry("800x600")
         
-        self.generator = ResumeGenerator()
-        
         self.dropdown_options = {
-            "GPT-4.1": "gpt",
-            "Gemini-2.5-Pro": "gemini", 
+            "GPT-4.1": "openai",
+            "Gemini-2.5-Pro": "google", 
             "DeepSeek": "deepseek"
         }
         
@@ -152,10 +150,10 @@ class MainWindow:
         """Generate resume in background thread"""
         try:
             self.update_status("Processing job description...", "blue")
-            
+
+            self.generator = ResumeGenerator(llm_provider=selected_value_code)
             # Pass the selected value code to your generator
-            # You'll need to modify your generator to accept this parameter
-            result = self.generator.generate_application(job_description, option_code=selected_value_code)
+            result = self.generator.generate_application(job_description)
             
             # Update UI in main thread
             self.root.after(0, self.on_generation_complete, result)
