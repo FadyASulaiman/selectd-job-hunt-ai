@@ -2,16 +2,16 @@ import json
 import time
 import openai
 from config.settings import Settings
-from core.llm_interface import LLMInterface
+from core.llm_providers.llm_interface import LLMInterface
 
 
 class GPTLLM(LLMInterface):
     """GPT-4.1 implementation with robust API handling and optimized prompts."""
     
-    def __init__(self):
+    def __init__(self, model: str):
         # Set the OpenAI API key
-        openai.api_key = Settings.OPENAI_API_KEY
-        self.model = Settings.GPT_MODEL
+        openai.api_key = Settings.MODEL_PROVIDERS["openai"]["key"]
+        self.model = model
         self.max_retries = 3
         self.max_tokens = 3000  # Adjust based on input size and model context limits
     
