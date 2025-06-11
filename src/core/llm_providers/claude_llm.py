@@ -2,7 +2,7 @@ import json
 
 import anthropic
 from config.settings import Settings
-from core.llm_interface import LLMInterface
+from core.llm_providers.llm_interface import LLMInterface
 
 
 class ClaudeLLM(LLMInterface):
