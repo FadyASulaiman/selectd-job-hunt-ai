@@ -8,7 +8,7 @@ class TestGeminiLLM:
     @pytest.fixture
     def gemini_llm(self):
         """Create a GeminiLLM instance for testing"""
-        with patch('your_module.Settings') as mock_settings:
+        with patch('core.llm_providers.gemini_llm.Settings') as mock_settings:
             mock_settings.GEMINI_API_KEY = "test-api-key"
             mock_settings.MAX_WORK_EXPERIENCE = 3
             mock_settings.MAX_PROJECT_EXPERIENCE = 3
@@ -16,7 +16,7 @@ class TestGeminiLLM:
             mock_settings.MAX_BULLET_POINTS_OTHER_PROJECTS = 3
             mock_settings.MAX_WORDS_PER_BULLET = 20
             
-            with patch('your_module.genai.Client'):
+            with patch('core.llm_providers.gemini_llm.genai.Client'):
                 return GeminiLLM()
     
     @pytest.fixture
@@ -142,7 +142,7 @@ class TestGeminiLLM:
         """Test that cover letter prompt includes all required data"""
         with patch.object(gemini_llm, '_call_gemini', return_value="test letter") as mock_call:
             gemini_llm.generate_cover_letter(
-                "test job desc",
+                "te]st job desc",
                 {"applicant_info": {"name": "John"}, "work_experience": [], "project_experience": []},
                 {"company_name": "TestCorp"}
             )
@@ -155,9 +155,9 @@ class TestGeminiLLM:
 
     def test_initialization_with_real_settings(self):
         """Test that class initializes correctly with real settings"""
-        with patch('your_module.Settings') as mock_settings:
+        with patch('core.llm_providers.gemini_llm.Settings') as mock_settings:
             mock_settings.GEMINI_API_KEY = "test-key"
-            with patch('your_module.genai.Client') as mock_client:
+            with patch('core.llm_providers.gemini_llm.genai.Client') as mock_client:
                 llm = GeminiLLM()
                 
                 assert llm.model_name == "gemini-2.5-pro"
