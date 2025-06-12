@@ -20,3 +20,9 @@ Jun 10 2025
 - Updated resume generator and latex processor to handle the new template
 - Added json schema validator for user data (processed and returned from the LLM)
 - Add dynamic model selection to ResumeGenerator class, mapping resume & cover letter creation to main models and detail extraction to small (flash/nano) models. Plus, updating MODEL_PROVIDER map in settings for dynamic selection.
+
+Jun 12 2025
+- Created LLM Provider & Factory classes to supply LLM instances
+- Abstracted the services to a separate layer, living in the services class. Created job_analysis, user_data and document services
+- created, but did not run, unit tests for the application generation class.
+- Minor refactoring.
