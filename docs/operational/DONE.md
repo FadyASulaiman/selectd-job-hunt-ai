@@ -23,6 +23,10 @@ Jun 10 2025
 
 Jun 12 2025
 - Created LLM Provider & Factory classes to supply LLM instances
-- Abstracted the services to a separate layer, living in the services class. Created job_analysis, user_data and document services
+- Abstracted the services to a separate layer, living in the services folder. Created job_analysis, user_data and document services
 - created, but did not run, unit tests for the application generation class.
 - Minor refactoring.
+
+Jun 13 2025
+- Application Creation flow is clarified in detail, from both practical and technical view points, which is proving crucial in order to keep track of all the elements in play.
+- Debugged the ```on_generate_click()``` method in the main window in order to adopt the new structure.
