@@ -2,7 +2,12 @@
 import tkinter as tk
 from tkinter import ttk, scrolledtext, messagebox
 import threading
+from core.application_generator import ApplicationGenerator
+from core.database.database import DatabaseManager
 from core.resume_generator import ResumeGenerator
+from core.services.document_service import DocumentService
+from core.services.job_analysis_service import JobAnalysisService
+from core.services.user_data_service import UserDataService
 
 class MainWindow:
     """Main GUI window for the resume automation tool"""
@@ -141,18 +146,31 @@ class MainWindow:
         self.progress.start()
         
         # Run generation in separate thread, passing the selected value code
-        thread = threading.Thread(target=self.generate_resume_thread, 
+        thread = threading.Thread(target=self.generate_application_thread, 
                                  args=(job_description, selected_value_code))
         thread.daemon = True
         thread.start()
     
-    def generate_resume_thread(self, job_description: str, selected_value_code: str):
+    def create_application_generator(self, llm_provider: str = None) -> ApplicationGenerator:
+        """Factory function to create ApplicationGenerator"""
+        user_data_service = UserDataService()
+        document_service = DocumentService()
+        job_analysis_service = JobAnalysisService(llm_provider)
+        database_manager = DatabaseManager()
+        
+        return ApplicationGenerator(
+            user_data_service=user_data_service,
+            document_service=document_service,
+            job_analysis_service=job_analysis_service,
+            database_manager=database_manager
+        )
+    
+    def generate_application_thread(self, job_description: str, selected_value_code: str):
         """Generate resume in background thread"""
         try:
             self.update_status("Processing job description...", "blue")
 
-            self.generator = ResumeGenerator(llm_provider=selected_value_code)
-            # Pass the selected value code to your generator
+            self.generator = self.create_application_generator(llm_provider=selected_value_code)
             result = self.generator.generate_application(job_description)
             
             # Update UI in main thread
