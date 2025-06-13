@@ -1,2 +1,7 @@
 Trailhead:
-- Unit test resume creation with static content (mimicking the resturn of the LLM). goal is template gets filled correctly and a PDF is output.
+- Unit test JobAnalysisService
+- Unit test DocumentService
+- Unit Test UserDataService
+- Integration test JobAnalysisService
+- Integration test DocumentService
+- Integration Test UserDataService
