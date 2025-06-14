@@ -4,22 +4,22 @@ from dotenv import load_dotenv
 import os
 
 class Settings:
-    load_dotenv("src/env/api_keys.env")
+    load_dotenv('src/env/api_keys.env')
 
 
     # LLM API config
     MODEL_PROVIDERS = {
-        "openai": {"model":"GPT-4.1", "key": os.environ.get('OPENAI_API_KEY', '')}, 
-        "google": {"model": "gemini-2.5-flash-preview-04-17", "key": os.environ.get('GEMINI_API_KEY', '')},
-        "deepseek": {"model":"deepseek-reasoner", "key": os.environ.get('DEEPSEEK_API_KEY', '')},
-        "small_model": {"model": "gemini-2.5-flash-preview-04-17", "key": os.environ.get('GEMINI_API_KEY', '')} }
+        'openai': {'model':'gpt-4.1', 'small_model':'gpt-4.1-nano', 'key': os.environ.get('OPENAI_API_KEY', '')}, 
+        'google': {'model': 'gemini-2.5-flash-preview-04-17', 'small_model':'gemini-2.5-flash-preview-04-17', 'key': os.environ.get('GEMINI_API_KEY', '')},
+        'deepseek': {'model':'deepseek-reasoner', 'small_model':'deepseek-chat', 'key': os.environ.get('DEEPSEEK_API_KEY', '')},
+        'anthropic': {'model': 'claude-sonnet-4', 'key': ''} }
 
     # small model
-    SMALL_MODEL_PROVIDER = "google" # alt: openai - GPT-4.1-nano
-    SMALL_MODEL = "gemini-2.5-flash-preview-04-17"
+    SMALL_MODEL_PROVIDER = 'google' # alt: openai - GPT-4.1-nano
+    SMALL_MODEL = 'gemini-2.5-flash-preview-04-17'
 
     # default
-    DEFAULT_LLM_PROVIDER = "openai"
+    DEFAULT_LLM_PROVIDER = 'openai'
 
     # Paths
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -39,7 +39,7 @@ class Settings:
     MAX_WORDS_PER_BULLET = 30
 
     # LLM providers
-    SUPPORTED_PROVIDERS = ['claude', 'gpt4', 'gpt-4', 'openai', 'gemini', 'google', 'deepseek', 'deep-seek']
+    SUPPORTED_PROVIDERS = ['claude', 'anthropic', 'gpt', 'openai', 'gemini', 'google', 'deepseek']
     
     # Ensure directories exist
     @classmethod
