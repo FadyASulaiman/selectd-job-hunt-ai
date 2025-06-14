@@ -1,6 +1,7 @@
 import json
 import time
-import openai
+from openai import OpenAI
+from openai import APIError
 from config.settings import Settings
 from core.llm_providers.llm_interface import LLMInterface
 
@@ -9,29 +10,31 @@ class DeepSeekLLM(LLMInterface):
     """DeepSeek R1 implementation using OpenAI-compatible SDK"""
     
     def __init__(self, model: str):
-        
-        openai.base_url = "https://api.deepseek.com/v1"
-        openai.api_key = Settings.MODEL_PROVIDERS["deepseek"]["key"]
+
+        self.client = OpenAI(api_key=Settings.MODEL_PROVIDERS["deepseek"]["key"], base_url="https://api.deepseek.com/v1")
+                
         self.model = model 
         self.max_retries = 3
-        self.max_tokens = 3000
+        self.max_output_tokens = 3000
     
     def _call_deepseek(self, system_prompt: str, user_prompt: str, temperature: float = 0.4) -> str:
         """Make API call to DeepSeek R1 with OpenAI-compatible SDK"""
         for attempt in range(self.max_retries):
             try:
-                response = openai.ChatCompletion.create(
+                response = self.client.chat.completions.create(
                     model=self.model,
                     messages=[
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_prompt}
+                        {"role": "system", "content": system_prompt.strip()},
+                        {"role": "user", "content": user_prompt.strip()},
                     ],
-                    max_tokens=self.max_tokens,
+                    stream=False,
+                    max_tokens=self.max_output_tokens,
                     temperature=temperature,
                     top_p=0.9
                 )
+
                 return response.choices[0].message.content
-            except openai.error.APIError as e:
+            except APIError as e:
                 if attempt == self.max_retries - 1:
                     raise Exception(f"DeepSeek API error: {str(e)}")
                 time.sleep(2 ** attempt)
@@ -128,9 +131,41 @@ STRICT RULES:
             return json.loads(cleaned_response)
         except json.JSONDecodeError as e:
             raise Exception(f"Failed to parse resume JSON: {str(e)}")
+        
+ 
+    def generate_cover_letter(self, job_description: str, user_data: dict, company_info: dict) -> str:
+        """Generate compelling cover letter"""
+        system_prompt = """You are an expert cover letter writer for ML/Data Science positions. Write compelling, personalized cover letters that:
+- Show genuine interest in the specific company and role
+- Highlight relevant experience and achievements
+- Demonstrate cultural fit
+- Are concise yet impactful (300-400 words)
+- Use a professional but engaging tone
+- Include specific examples and quantifiable results"""
+
+        user_prompt = f"""
+        Write a cover letter for this application:
+        
+        Job Description:
+        {job_description}
+        
+        Company Info:
+        {json.dumps(company_info, indent=2)}
+        
+        Applicant Info:
+        {json.dumps(user_data['applicant_info'], indent=2)}
+        
+        Relevant Experience:
+        Work: {json.dumps(user_data['work_experience'], indent=2)}
+        Projects: {json.dumps(user_data['project_experience'], indent=2)}
+        
+        Generate a compelling cover letter that connects the applicant's experience to this specific role and company.
+        """
+        
+        return self._call_deepseek(system_prompt, user_prompt)
+
     
     def _clean_json_response(self, response: str) -> str:
-        """Clean response to extract JSON"""
         cleaned = response.strip()
         if '```json' in cleaned:
             cleaned = cleaned.split('```json')[1].split('```')[0]
