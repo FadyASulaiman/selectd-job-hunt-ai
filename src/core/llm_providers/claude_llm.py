@@ -9,8 +9,8 @@ class ClaudeLLM(LLMInterface):
     """Claude API implementation"""
     
     def __init__(self):
-        self.client = anthropic.Anthropic(api_key=Settings.GEMINI_API_KEY)
-        self.model = Settings.CLAUDE_MODEL
+        self.client = anthropic.Anthropic(api_key=Settings.MODEL_PROVIDERS["claude"]["key"])
+        self.model = Settings.MODEL_PROVIDERS["claude"]["model"]
         pass
     
     def _call_claude(self, system_prompt: str, user_prompt: str) -> str:
