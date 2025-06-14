@@ -47,7 +47,7 @@ class ApplicationGenerator:
         self.job_analysis_service = job_analysis_service
         self.database_manager = database_manager
         
-        logger.info("ResumeGenerator initialized")
+        logger.info("ApplicationGenerator initialized")
     
     
     def generate_application(self, job_description: str) -> ApplicationResult:
@@ -87,7 +87,7 @@ class ApplicationGenerator:
                 success=True,
                 application_id=app_id,
                 company_info=company_info,
-                output_directory=output_dir,
+                output_directory=output_dir
             )
             
         except Exception as e:
