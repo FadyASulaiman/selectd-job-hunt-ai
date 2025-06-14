@@ -11,7 +11,7 @@ class JobAnalysisService:
     def __init__(self, llm_provider: str = None):
         provider = llm_provider or Settings.DEFAULT_LLM_PROVIDER
         self.main_llm = LLMFactory.create_llm(provider)
-        self.small_llm = LLMFactory.create_llm("google", Settings.SMALL_MODEL)
+        self.small_llm = LLMFactory.create_llm(provider, Settings.MODEL_PROVIDERS[provider]["small_model"])
         
         logger.info(f"JobAnalysisService initialized with provider: {provider}")
     
