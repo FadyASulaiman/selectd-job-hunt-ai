@@ -13,7 +13,7 @@ class GPTLLM(LLMInterface):
         if not api_key:
             api_key = Settings.MODEL_PROVIDERS["openai"]["key"]
         self.model = model
-        self.client = OpenAI()
+        self.client = OpenAI(api_key=api_key)
         self.max_retries = 3
         self.max_ouptut_tokens = 3000
 
