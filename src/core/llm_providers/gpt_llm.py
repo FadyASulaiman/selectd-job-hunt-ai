@@ -15,7 +15,7 @@ class GPTLLM(LLMInterface):
         self.model = model
         self.client = OpenAI(api_key=api_key)
         self.max_retries = 3
-        self.max_ouptut_tokens = 3000
+        self.max_output_tokens = 3000
 
 
     def _call_gpt(self, system_prompt: str, user_prompt: str, temperature: float = 0.4) -> str:
@@ -28,7 +28,7 @@ class GPTLLM(LLMInterface):
                         {"role": "system", "content": system_prompt.strip()},
                         {"role": "user", "content": user_prompt.strip()}
                     ],
-                    max_output_tokens = self.max_ouptut_tokens,
+                    max_output_tokens = self.max_output_tokens,
                     temperature= temperature,
                     top_p = 0.9 
                 )
