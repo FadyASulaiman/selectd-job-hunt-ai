@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+import os
 from pathlib import Path
 from typing import Dict, Any, Optional
 from dataclasses import dataclass
@@ -60,7 +61,7 @@ class DocumentService:
         job_title = company_info.get('job_title', 'Position').replace(' ', '-')
         
         dir_name = f"{date_str}-{company_name}-{job_title}"
-        output_dir = Settings.APPLICATIONS_DIR / dir_name
+        output_dir = Path(os.path.join(Settings.APPLICATIONS_DIR, dir_name))
         output_dir.mkdir(parents=True, exist_ok=True)
         
         return output_dir
