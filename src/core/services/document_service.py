@@ -22,48 +22,7 @@ class DocumentService:
     def __init__(self, latex_processor: Optional[LaTeXProcessor] = None):
         self.latex_processor = latex_processor or LaTeXProcessor()
         Settings.setup_directories()
-    
-    def generate_resume_documents(self, resume_data: Dict[str, Any]) -> DocumentGenerationResult:
-        """Generate resume documents (LaTeX and PDF)"""
-        try:
-            # Validate data if required
-            if Settings.RESUME_TEMPLATE_SETTINGS.validate_json_schema:
-                ResumeDataValidator.validate(resume_data)
-            
-            # Generate LaTeX content
-            latex_content = self.latex_processor.fill_resume_template(resume_data, {})
-            
-            # Create output directory
-            output_dir = self._create_resume_output_directory()
-            
-            latex_path = None
-            pdf_path = None
-            
-            # Save LaTeX file if requested
-            if Settings.RESUME_TEMPLATE_SETTINGS.save_to_file:
-                latex_path = output_dir / "resume.tex"
-                self._save_text_file(latex_path, latex_content)
-                logger.info(f"LaTeX file saved: {latex_path}")
-            
-            # Generate PDF if requested
-            if Settings.RESUME_TEMPLATE_SETTINGS.generate_pdf and latex_content:
-                pdf_path = output_dir / "resume.pdf"
-                success = self.latex_processor.compile_latex_to_pdf(latex_content, str(pdf_path))
-                if not success:
-                    logger.warning("PDF generation failed")
-                    pdf_path = None
-                else:
-                    logger.info(f"PDF file generated: {pdf_path}")
-            
-            return DocumentGenerationResult(
-                latex_content=latex_content,
-                latex_path=latex_path,
-                pdf_path=pdf_path
-            )
-            
-        except Exception as e:
-            logger.error(f"Document generation failed: {e}")
-            raise
+
     
     def generate_application_package(
         self,
@@ -92,13 +51,7 @@ class DocumentService:
         except Exception as e:
             logger.error(f"Application package generation failed: {e}")
             raise
-    
-    def _create_resume_output_directory(self) -> Path:
-        """Create output directory for resume-only generation"""
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_dir = Settings.APPLICATIONS_DIR / f"resume_{timestamp}"
-        output_dir.mkdir(parents=True, exist_ok=True)
-        return output_dir
+
     
     def _create_application_output_directory(self, company_info: Dict[str, Any]) -> Path:
         """Create output directory for full application"""
