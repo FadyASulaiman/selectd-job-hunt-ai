@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import os
 from typing import List
 
 
@@ -6,9 +7,13 @@ from typing import List
 class ResumeTemplateSettings:
     """Settings specific to resume template generation."""
     
-    # Template settings
-    template_file_path: str = "templates/resume_template.tex"
+    # Paths
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
     
+    RESUME_TEMPLATE_FILE_PATH = os.path.join(TEMPLATE_DIR, 'resume_template.tex')
+    COVER_LETTER_FILE_PATH = os.path.join(TEMPLATE_DIR, 'cover_letter_template.tex')
+
     # Generation options
     generate_latex: bool = True
     generate_pdf: bool = True
