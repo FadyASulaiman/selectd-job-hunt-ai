@@ -325,10 +325,12 @@ def pytest_configure(config):
 # pytest src/test/unit/services/job_analysis_svc_tests/test_job_analysis.py::TestJobAnalysisServiceUnit -v
 
 # # Run only integration tests
-# pytest src/test/unit/services/job_analysis_svc_tests/test_job_analysis.py -m integration -v
+# pytest src/test/unit/services/job_analysis_svc_tests/test_job_analysis.py -m integration -xvs
 
 # # Run only end-to-end tests
 # pytest src/test/unit/services/job_analysis_svc_tests/test_job_analysis.py -m e2e -v
 
 # # Run unit + integration (skip e2e)
 # pytest src/test/unit/services/job_analysis_svc_tests/test_job_analysis.py -m "not e2e" -v
+
+# resume content generation consume around 5000 tokens
