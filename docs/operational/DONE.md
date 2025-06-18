@@ -30,3 +30,8 @@ Jun 12 2025
 Jun 13 2025
 - Application Creation flow is clarified in detail, from both practical and technical view points, which is proving crucial in order to keep track of all the elements in play.
 - Debugged the ```on_generate_click()``` method in the main window in order to adopt the new structure.
+
+Jun 18 2025
+- Debug DocumentService & LaTexProcessor classes
+- Fix Resume Generation settings to supply correct paths
+- Add a comprehensive testing suite for DocumentService (Unit/Integration/e2e) - Tests ran and passed
