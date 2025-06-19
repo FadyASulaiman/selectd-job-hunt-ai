@@ -214,7 +214,7 @@ class LaTeXProcessor:
     def fill_cover_letter_template(self, cover_letter: str, user_data: dict, company_info: dict) -> str:
         """Fill cover letter template (existing method)."""
         # Keep your existing implementation
-        template_path = self.settings.COVER_LETTER_FILE_PATH
+        template_path = Path(self.settings.COVER_LETTER_FILE_PATH)
         
         if template_path.exists():
             with open(template_path, 'r', encoding='utf-8') as f:
