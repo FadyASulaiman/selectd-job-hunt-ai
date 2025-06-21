@@ -1,2 +1,3 @@
 Trailhead:
-- Fix Resume Filling mechanism, produce PDFs. (yes we are that close to the north star)
+- Fix Resume Template, produce PDFs.
+- Define the user state flow, from login(pseudo) to application tracking. Assume multiple users.
