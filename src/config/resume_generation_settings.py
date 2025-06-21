@@ -14,6 +14,8 @@ class ResumeTemplateSettings:
     RESUME_TEMPLATE_FILE_PATH = os.path.join(TEMPLATE_DIR, 'resume_template.tex')
     COVER_LETTER_FILE_PATH = os.path.join(TEMPLATE_DIR, 'cover_letter_template.tex')
 
+    ALTACV_PATH = os.path.join(TEMPLATE_DIR, 'altacv.cls')
+
     # Generation options
     generate_latex: bool = True
     generate_pdf: bool = True
