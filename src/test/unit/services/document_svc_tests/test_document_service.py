@@ -2,14 +2,11 @@ import pytest
 import tempfile
 import shutil
 from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock, call
-from datetime import datetime
-from dataclasses import dataclass
-from typing import Dict, Any, Optional
+from unittest.mock import Mock, patch
 
 # Correct imports based on your project structure
 from core.latex_processor import LaTeXProcessor
-from core.services.document_service import DocumentService, DocumentGenerationResult
+from core.services.document_service import DocumentService
 
 
 # Test data fixtures
@@ -447,6 +444,180 @@ class TestDocumentServiceE2E:
             saved_content = f.read()
             assert len(saved_content) == len(large_content)
             assert saved_content == large_content
+
+    def test_real_latex_compilation_integration(self, document_service_e2e, temp_dir,
+                                            sample_resume_content, sample_cover_letter,
+                                            sample_user_data, sample_company_info,
+                                            sample_job_description):
+        """Test real LaTeX compilation and PDF generation with existing templates"""
+        # Run the full pipeline WITHOUT mocking LaTeX compilation
+        result_dir = document_service_e2e.generate_application_package(
+            sample_resume_content, sample_cover_letter, sample_user_data,
+            sample_company_info, sample_job_description
+        )
+        
+        # Verify all files were created
+        files = list(result_dir.glob("*"))
+        file_names = [f.name for f in files]
+        
+        # Check that both LaTeX and PDF files exist
+        latex_files = [f for f in files if f.name.endswith(".tex")]
+        pdf_files = [f for f in files if f.name.endswith(".pdf")]
+        
+        assert len(latex_files) >= 2, "Should have resume and cover letter LaTeX files"
+        assert len(pdf_files) >= 2, "Should have resume and cover letter PDF files"
+        
+        # Verify PDF files are actual PDF files (not empty or corrupted)
+        for pdf_file in pdf_files:
+            assert pdf_file.stat().st_size > 1000, f"PDF file {pdf_file.name} seems too small"
+            
+            # Read first few bytes to verify it's a real PDF
+            with open(pdf_file, 'rb') as f:
+                header = f.read(4)
+                assert header == b'%PDF', f"File {pdf_file.name} is not a valid PDF"
+        
+        # Verify LaTeX files contain processed template content
+        resume_latex_file = next((f for f in latex_files if "Resume" in f.name), None)
+        cover_letter_latex_file = next((f for f in latex_files if "CoverLetter" in f.name), None)
+        
+        assert resume_latex_file is not None, "Resume LaTeX file not found"
+        assert cover_letter_latex_file is not None, "Cover letter LaTeX file not found"
+        
+        # Check that template processing actually occurred
+        with open(resume_latex_file, 'r', encoding='utf-8') as f:
+            resume_content = f.read()
+            # Verify it's using altacv documentclass from the template
+            assert "\\documentclass[10pt,a4paper,ragged2e,withhyper]{altacv}" in resume_content
+            # Verify template placeholders were replaced
+            assert "(((" not in resume_content, "Jinja2 template placeholders should be replaced"
+            assert sample_user_data['applicant_info']['name'] in resume_content
+        
+        with open(cover_letter_latex_file, 'r', encoding='utf-8') as f:
+            cover_letter_content = f.read()
+            # Verify it's using letter documentclass from the template
+            assert "\\documentclass[11pt,a4paper]{letter}" in cover_letter_content
+            # Verify template placeholders were replaced
+            assert "{{" not in cover_letter_content, "Template placeholders should be replaced"
+            assert sample_user_data['applicant_info']['name'] in cover_letter_content
+            assert sample_company_info['company_name'] in cover_letter_content
+
+
+    def test_template_processing_and_content_verification(self, document_service_e2e, temp_dir,
+                                                        sample_resume_content, sample_cover_letter,
+                                                        sample_user_data, sample_company_info,
+                                                        sample_job_description):
+        """Test that existing templates are correctly processed and contain expected content"""
+        # Mock PDF compilation to focus on template processing verification
+        with patch.object(document_service_e2e.latex_processor, 'compile_latex_to_pdf',
+                        return_value=True):
+            
+            result_dir = document_service_e2e.generate_application_package(
+                sample_resume_content, sample_cover_letter, sample_user_data,
+                sample_company_info, sample_job_description
+            )
+        
+        # Get generated files
+        latex_files = list(result_dir.glob("*.tex"))
+        resume_file = next((f for f in latex_files if "Resume" in f.name), None)
+        cover_letter_file = next((f for f in latex_files if "CoverLetter" in f.name), None)
+        
+        assert resume_file is not None, "Resume LaTeX file should exist"
+        assert cover_letter_file is not None, "Cover letter LaTeX file should exist"
+        
+        # Verify resume template processing
+        with open(resume_file, 'r', encoding='utf-8') as f:
+            resume_content = f.read()
+        
+        # Check that the altacv template structure is preserved
+        assert "\\documentclass[10pt,a4paper,ragged2e,withhyper]{altacv}" in resume_content
+        assert "\\name{" in resume_content
+        assert "\\tagline{" in resume_content
+        assert "\\personalinfo{" in resume_content
+        assert "\\makecvheader" in resume_content
+        
+        # Check personal information was filled from user_data
+        user_info = sample_user_data['applicant_info']
+        assert f"\\name{{{user_info['name']}}}" in resume_content
+        assert f"\\email{{{user_info['email']}}}" in resume_content
+        
+        # Check conditional fields are handled properly
+        if 'phone' in user_info and user_info['phone']:
+            assert f"\\phone{{{user_info['phone']}}}" in resume_content
+        
+        # Check that resume content sections are processed
+        if 'work_experience' in sample_resume_content:
+            assert "\\cvsection{Experience}" in resume_content
+            for exp in sample_resume_content['work_experience']:
+                assert exp['company_name'] in resume_content
+                assert exp['role_title'] in resume_content
+        
+        if 'education' in sample_resume_content:
+            assert "\\cvsection{Higher Education}" in resume_content
+            for edu in sample_resume_content['education']:
+                assert edu['institution_name'] in resume_content
+                assert edu['degree_name'] in resume_content
+        
+        if 'skills' in sample_resume_content:
+            assert "\\cvsection{Skills}" in resume_content
+            for skill in sample_resume_content['skills']:
+                assert skill['category'] in resume_content
+        
+        if 'projects' in sample_resume_content:
+            assert "\\cvsection{Notable ML Projects}" in resume_content
+            for project in sample_resume_content['projects']:
+                assert project['project_title'] in resume_content
+        
+        # Verify no template syntax remains
+        assert "(((" not in resume_content, "Jinja2 syntax should be completely processed"
+        assert ")))" not in resume_content, "Jinja2 syntax should be completely processed"
+        assert "((*" not in resume_content, "Jinja2 conditional syntax should be processed"
+        assert "*-))" not in resume_content, "Jinja2 conditional syntax should be processed"
+        
+        # Verify cover letter template processing
+        with open(cover_letter_file, 'r', encoding='utf-8') as f:
+            cover_letter_content = f.read()
+        
+        # Check that the letter template structure is preserved
+        assert "\\documentclass[11pt,a4paper]{letter}" in cover_letter_content
+        assert "\\signature{" in cover_letter_content
+        assert "\\address{" in cover_letter_content
+        assert "\\begin{letter}{" in cover_letter_content
+        assert "\\opening{Dear Hiring Manager,}" in cover_letter_content
+        assert "\\closing{Sincerely,}" in cover_letter_content
+        
+        # Check all placeholders were replaced with actual data
+        assert f"\\signature{{{user_info['name']}}}" in cover_letter_content
+        assert f"{user_info['email']}" in cover_letter_content
+        assert f"{user_info['phone']}" in cover_letter_content
+        assert f"{sample_company_info['company_name']}" in cover_letter_content
+        assert sample_cover_letter in cover_letter_content
+        
+        # Verify no template syntax remains
+        assert "{{NAME}}" not in cover_letter_content, "NAME placeholder should be replaced"
+        assert "{{EMAIL}}" not in cover_letter_content, "EMAIL placeholder should be replaced"
+        assert "{{PHONE}}" not in cover_letter_content, "PHONE placeholder should be replaced"
+        assert "{{COMPANY_NAME}}" not in cover_letter_content, "COMPANY_NAME placeholder should be replaced"
+        assert "{{COVER_LETTER_CONTENT}}" not in cover_letter_content, "COVER_LETTER_CONTENT placeholder should be replaced"
+        
+        # Verify job description file content and format
+        job_desc_files = list(result_dir.glob("*JD.md"))
+        assert len(job_desc_files) == 1, "Should have exactly one job description file"
+        
+        with open(job_desc_files[0], 'r', encoding='utf-8') as f:
+            job_desc_content = f.read()
+            # Check markdown format
+            expected_header = f"# {sample_company_info['company_name']} - {sample_company_info['job_title']}"
+            assert expected_header in job_desc_content
+            assert sample_job_description in job_desc_content
+            
+        # Verify file naming conventions
+        expected_user_name = user_info['name'].replace(' ', '')
+        expected_company_name = sample_company_info['company_name'].replace(' ', '')
+        
+        assert any(expected_user_name in f.name and "Resume" in f.name for f in latex_files)
+        assert any(expected_user_name in f.name and "CoverLetter" in f.name for f in latex_files)
+        assert any(expected_company_name in f.name and "JD.md" in f.name for f in job_desc_files)
+
 
 # # Run only unit tests
 # pytest src/test/unit/services/document_svc_tests/test_document_service.py -m unit -xvs
