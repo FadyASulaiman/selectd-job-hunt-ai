@@ -35,3 +35,9 @@ Jun 18 2025
 - Debug DocumentService & LaTexProcessor classes
 - Fix Resume Generation settings to supply correct paths
 - Add a comprehensive testing suite for DocumentService (Unit/Integration/e2e) - Tests ran and passed
+
+Jun 21 2025
+- Update Cover letter template to jinja2
+- Debugged latex compilation to PDF, verified cover letter generation. done. (yes, we are that close to the north star)
+- updated sql db workflow, WIP.
+- Added two cases to the e2e testing suite for DocumentService.
