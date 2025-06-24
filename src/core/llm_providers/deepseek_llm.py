@@ -102,7 +102,8 @@ STRICT RULES:
                     "company_name": "",
                     "job_title": "", 
                     "location": "",
-                    "date_range": "",
+                    "start_date": "",
+                    "end_date": "",
                     "bullet_points": ["impact-driven bullet 1", "achievement bullet 2", "technical bullet 3"]
                 }}
             ],
