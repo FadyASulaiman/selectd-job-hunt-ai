@@ -39,66 +39,67 @@
 
 \personalinfo{
 \email{((( email )))}
-((*- if phone *))
+((*- if phone +*))
 \phone{((( phone )))}
-((*- endif *))
-((*- if github_link *))
+((*- endif +*))
+((*- if github_link +*))
 \github{((( github_link )))}
-((*- endif *))
-((*- if linkedin_link *))
+((*- endif +*))
+((*- if linkedin_link +*))
 \linkedin{((( linkedin_link )))}
-((*- endif *))
-((*- if personal_website *))
+((*- endif +*))
+((*- if personal_website +*))
 \homepage{((( personal_website )))}
-((*- endif *))
+((*- endif +*))
 }
 
 \makecvheader
 
-((*- if executive_summary *))
+((*- if executive_summary +*))
 \begin{flushleft}
 ((( executive_summary )))
 \end{flushleft}
-((*- endif *))
 
+((*- endif +*))
 \AtBeginEnvironment{itemize}{\small}
 
-((*- if projects *))
+((*- if projects +*))
 \cvsection{Notable ML Projects}
 
-((*- for project in projects *))
+((*- for project in projects +*))
 \cvevent{}{((( project.project_title )))}{}{}
-((*- if project.project_links *))
-((*- for link in project.project_links *))
-\cvtag{((( link.name ))): \href{((( link.link )))}{((( link.link )))}}
-((*- endfor *))
-((*- endif *))
-((*- if project.project_description *))
+((*- if project.project_links +*))
+((*- for link in project.project_links +*))
+\cvtag{((( link.name ))): \href{((( link.link )))}{((( link.link )))}%
+}
+((*- endfor +*))
+((*- endif +*))
+((*- if project.project_description +*))
 \begin{itemize}
-((*- for desc in project.project_description *))
+((*- for desc in project.project_description +*))
     \item ((( desc )))
-((*- endfor *))
+((*- endfor +*))
 \end{itemize}
-((*- endif *))
+((*- endif +*))
 
-((*- endfor *))
-((*- endif *))
+((*- endfor +*))
+((*- endif +*))
 
-((*- if work_experience *))
+((*- if work_experience +*))
 \cvsection{Experience}
 
-((*- for exp in work_experience *))
-\cvevent{((( exp.role_title )))}{((( exp.company_name )))}{((( exp.working_from ))) -- ((*- if exp.working_to *))((( exp.working_to )))((*- else *))Present((*- endif *))}{((*- if exp.company_location *))((( exp.company_location )))((*- endif *))}
-((*- if exp.experience *))
+((*- for exp in work_experience +*))
+\cvevent{((( exp.role_title )))}{((( exp.company_name )))}{((( exp.working_from ))) -- ((*- if exp.working_to +*))((( exp.working_to )))((*- else +*))Present((*- endif +*))}{((*- if exp.company_location +*))((( exp.company_location )))((*- endif +*))}
+((*- if exp.experience +*))
 \begin{itemize}
-((*- for item in exp.experience *))
+((*- for item in exp.experience +*))
     \item ((( item )))
-((*- endfor *))
+((*- endfor +*))
 \end{itemize}
-((*- endif *))
+((*- endif +*))
 
-((*- endfor *))
-((*- endif *))
+((*- endfor +*))
+((*- endif +*))
 
 \renewcommand{\cvDateMarker}{}
 
@@ -106,32 +107,32 @@
 
 \begin{paracol}{2}
 
-((*- if education *))
+((*- if education +*))
 \cvsection{Higher Education}
 
-((*- for edu in education *))
-\cvevent{((( edu.degree_name ))) [((( edu.studied_from ))) -- ((*- if edu.studied_to *))((( edu.studied_to )))((*- else *))Present((*- endif *))]}{((( edu.institution_name )))((*- if edu.honors *))\\• [((( edu.honors )))]((*- endif *))}{}{}{} 
+((*- for edu in education +*))
+\cvevent{((( edu.degree_name ))) [((( edu.studied_from ))) -- ((*- if edu.studied_to +*))((( edu.studied_to )))((*- else +*))Present((*- endif +*))]}{((( edu.institution_name )))((*- if edu.honors +*))\\• [((( edu.honors )))]((*- endif +*))}{}{}{} 
 
-((*- endfor *))
-((*- endif *))
+((*- endfor +*))
+((*- endif +*))
 
 \switchcolumn
 
-((*- if skills *))
+((*- if skills +*))
 \cvsection{Skills}
 \begin{itemize}
-((*- for skill in skills *))
-    \item \textbf{((( skill.category )))}: ((( skill.skills_list ))).
-((*- endfor *))
+((*- for skill in skills +*))
+    \item \textbf{((( skill.category | replace("_", "\\_") )))}: ((( skill.skills_list ))).
+((*- endfor +*))
 \end{itemize}
-((*- endif *))
+((*- endif +*))
 
 \end{paracol}
 
-((*- if certifications *))
+((*- if certifications +*))
 \vspace{0.2cm}
 {\large\color{black}\textbf{Courses \& Certifications:}}
 ((( certifications )))
-((*- endif *))
+((*- endif +*))
 
 \end{document}
