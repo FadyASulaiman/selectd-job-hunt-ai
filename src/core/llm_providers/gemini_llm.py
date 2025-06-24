@@ -11,7 +11,7 @@ class GeminiLLM(LLMInterface):
     def __init__(self, model: str):
         
         self.model_name = model
-        self.client = genai.Client(api_key=Settings.GEMINI_API_KEY)
+        self.client = genai.Client(api_key=Settings.MODEL_PROVIDERS['google']['key'])
 
 
     def _call_gemini(self, system_prompt: str, user_prompt: str, thinking_budget: Optional[int] = None) -> str:
@@ -99,7 +99,8 @@ Return ONLY a valid JSON object with no additional text."""
                     "company_name": "",
                     "job_title": "", 
                     "location": "",
-                    "date_range": "",
+                    "start_date": "",
+                    "end_date": "",                 
                     "bullet_points": ["optimized bullet 1", "optimized bullet 2", "optimized bullet 3"]
                 }}
             ],
