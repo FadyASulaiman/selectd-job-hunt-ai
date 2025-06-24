@@ -46,4 +46,4 @@ class UserDataService:
     
     def _should_validate(self) -> bool:
         """Check if validation should be performed"""
-        return getattr(Settings, 'VALIDATE_USER_DATA', True)
+        return getattr(Settings, 'VALIDATE_USER_DATA', False)
