@@ -1,3 +1,4 @@
+import os
 import subprocess
 import shutil
 import tempfile
@@ -19,6 +20,7 @@ class LaTeXProcessor:
         self.settings = ResumeTemplateSettings()
         self._setup_jinja_environment()
         self._validate_latex_compiler()
+        self._ensure_latex_dependencies()
     
     def _setup_jinja_environment(self) -> None:
         """Setup Jinja2 environment with LaTeX-friendly settings."""
@@ -42,7 +44,15 @@ class LaTeXProcessor:
         """Validate that the LaTeX compiler is available."""
         if not shutil.which(self.settings.latex_compiler):
             logger.warning(f"LaTeX compiler '{self.settings.latex_compiler}' not found in PATH")
-    
+
+    def _ensure_latex_dependencies(self) -> None:
+        """Ensure required LaTeX class files are available."""
+        template_dir = Path(self.settings.TEMPLATE_DIR)
+        altacv_path = template_dir / "altacv.cls"
+        
+        if not altacv_path.exists():
+            logger.info(f"AltaCV class file not found, altacv.cls should be placed in {template_dir}")
+
     def fill_resume_template(self, resume_content: dict, user_data: dict) -> str:
         """
         Fill resume template with content using modern template system.
@@ -82,7 +92,6 @@ class LaTeXProcessor:
     def _convert_to_template_format(self, resume_content: dict, user_data: dict) -> dict:
         """Convert LLM-generated content to template format."""
         applicant_info = user_data.get('applicant_info', {})
-        
         # Map LLM content to template structure
         template_data = {
             # Basic info
@@ -93,16 +102,16 @@ class LaTeXProcessor:
             'linkedin_link': applicant_info.get('linkedin', ''),
             'personal_website': applicant_info.get('website', ''),
             'professional_title': resume_content.get('professional_title', ''),
-            'executive_summary': resume_content.get('summary', ''),
+            'executive_summary': resume_content.get('executive_summary', ''),
             
             # Projects
-            'projects': self._convert_projects(resume_content.get('projects', [])),
+            'projects': self._convert_projects(resume_content.get('selected_project_experience', [])),
             
             # Work experience
-            'work_experience': self._convert_work_experience(resume_content.get('work_experience', [])),
+            'work_experience': self._convert_work_experience(resume_content.get('selected_work_experience', [])),
             
             # Skills
-            'skills': self._convert_skills(resume_content.get('skills', {})),
+            'skills': self._convert_skills(resume_content.get('relevant_skills', {})),
             
             # Education
             'education': self._convert_education(user_data.get('education', [])),
@@ -116,12 +125,18 @@ class LaTeXProcessor:
     def _convert_projects(self, projects: list) -> list:
         """Convert projects to template format."""
         converted = []
+
         for project in projects:
             if isinstance(project, dict):
                 converted_project = {
-                    'project_title': project.get('title', ''),
-                    'project_links': project.get('links', []),
-                    'project_description': project.get('description', [])
+                    'project_title': project.get('project_name', ''),
+                    'documentation_link': project.get('documentation_link', ''),
+                    'github_link': project.get('github_link', ''),
+                    'live_link': project.get('live_link', ''),
+                    'demo_link': project.get('demo_link', ''),
+                    'project_description': project.get('bullet_points', []),
+                    'project_stack': project.get('project_stack', [])
+
                 }
                 converted.append(converted_project)
         return converted
@@ -129,15 +144,16 @@ class LaTeXProcessor:
     def _convert_work_experience(self, experience: list) -> list:
         """Convert work experience to template format."""
         converted = []
+
         for exp in experience:
             if isinstance(exp, dict):
                 converted_exp = {
-                    'company_name': exp.get('company', ''),
+                    'company_name': exp.get('company_name', ''),
                     'company_location': exp.get('location', ''),
                     'working_from': exp.get('start_date', ''),
                     'working_to': exp.get('end_date', ''),
-                    'role_title': exp.get('position', ''),
-                    'experience': exp.get('responsibilities', [])
+                    'role_title': exp.get('job_title', ''),
+                    'experience': exp.get('bullet_points', [])
                 }
                 converted.append(converted_exp)
         return converted
@@ -197,9 +213,9 @@ class LaTeXProcessor:
     
     def _legacy_fill_resume_template(self, resume_content: dict, user_data: dict) -> str:
         """Legacy template filling method as fallback."""
-        # Your original template filling logic here
+        # Original template filling logic
         # This ensures backward compatibility
-        template_path = self.settings.TEMPLATE_FILE_PATH / "resume_template_legacy.tex"
+        template_path = self.settings.TEMPLATE_DIR / "resume_template_legacy.tex"
         
         if template_path.exists():
             with open(template_path, 'r', encoding='utf-8') as f:
@@ -213,29 +229,29 @@ class LaTeXProcessor:
     
     def fill_cover_letter_template(self, cover_letter: str, user_data: dict, company_info: dict) -> str:
         """Fill cover letter template (existing method)."""
-        # Keep your existing implementation
-        template_path = Path(self.settings.COVER_LETTER_FILE_PATH)
-        
-        if template_path.exists():
-            with open(template_path, 'r', encoding='utf-8') as f:
-                template_content = f.read()
+
+        try:
+            template_name = Path(self.settings.COVER_LETTER_FILE_PATH).name
+            template = self.env.get_template(template_name)
             
-            # Replace placeholders with actual data
-            replacements = {
-                '{{APPLICANT_NAME}}': user_data.get('applicant_info', {}).get('name', ''),
-                '{{COMPANY_NAME}}': company_info.get('company_name', ''),
-                '{{JOB_TITLE}}': company_info.get('job_title', ''),
-                '{{COVER_LETTER_CONTENT}}': cover_letter,
-                '{{APPLICANT_EMAIL}}': user_data.get('applicant_info', {}).get('email', ''),
-                '{{APPLICANT_PHONE}}': user_data.get('applicant_info', {}).get('phone', ''),
+            # Prepare template data
+            template_data = {
+                'APPLICANT_NAME': user_data.get('applicant_info', {}).get('name', ''),
+                'APPLICANT_EMAIL': user_data.get('applicant_info', {}).get('email', ''),
+                'APPLICANT_PHONE': user_data.get('applicant_info', {}).get('phone', ''),
+                'COMPANY_NAME': company_info.get('company_name', ''),
+                'JOB_TITLE': company_info.get('job_title', ''),
+                'COVER_LETTER_CONTENT': cover_letter,
             }
             
-            for placeholder, value in replacements.items():
-                template_content = template_content.replace(placeholder, value)
+            return template.render(**template_data)
             
-            return template_content
-        
-        raise FileNotFoundError("Cover letter template not found")
+        except TemplateNotFound:
+            logger.error(f"Cover letter template not found: {self.settings.COVER_LETTER_FILE_PATH}")
+            raise
+        except Exception as e:
+            logger.error(f"Error rendering cover letter template: {e}")
+            raise
     
     def compile_latex_to_pdf(self, latex_content: str, output_path: str) -> bool:
         """
@@ -253,6 +269,9 @@ class LaTeXProcessor:
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_dir = Path(temp_dir)
             temp_tex_file = temp_dir / f"{output_path.stem}.tex"
+
+            # Copy required class files to temp directory
+            self._copy_latex_dependencies(temp_dir)
             
             # Write LaTeX content to temporary file
             with open(temp_tex_file, 'w', encoding='utf-8') as f:
@@ -296,3 +315,19 @@ class LaTeXProcessor:
             except Exception as e:
                 logger.error(f"LaTeX compilation error: {e}")
                 return False
+            
+    def _copy_latex_dependencies(self, temp_dir: Path) -> None:
+        """Copy required LaTeX class files to compilation directory."""
+        template_dir = Path(self.settings.TEMPLATE_DIR)
+        
+        # List of class files that might be needed
+        class_files = ["altacv.cls", "pubs-num.tex"]
+        
+        for class_file in class_files:
+            source_path = template_dir / class_file
+            if source_path.exists():
+                dest_path = temp_dir / class_file
+                shutil.copy2(source_path, dest_path)
+                logger.debug(f"Copied {class_file} to compilation directory")
+            else:
+                logger.warning(f"Class file {class_file} not found in template directory")
