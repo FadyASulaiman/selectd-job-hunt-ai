@@ -19,7 +19,7 @@ class GPTLLM(LLMInterface):
 
 
     def _call_gpt(self, system_prompt: str, user_prompt: str, temperature: float = 0.4) -> str:
-        """Make API call to GPT-4.1 with retry logic and error handling."""
+        """Make API call to GPT"""
         for attempt in range(self.max_retries):
             try:
                 response = self.client.responses.create(
@@ -32,6 +32,8 @@ class GPTLLM(LLMInterface):
                     temperature= temperature,
                     top_p = 0.9 
                 )
+                
+                print(response) # debug : remove
                 
                 # Extract the content of the response
                 return response.output_text
@@ -96,7 +98,7 @@ class GPTLLM(LLMInterface):
         CANDIDATE DATA:
         {json.dumps(user_data, indent=2)}
         
-        Generate an optimized resume JSON:
+        Generate an optimized resume JSON with this exact structure:
         {{
             "executive_summary": "compelling 150-word summary showcasing perfect fit",
             "selected_work_experience": [
@@ -104,7 +106,8 @@ class GPTLLM(LLMInterface):
                     "company_name": "",
                     "job_title": "", 
                     "location": "",
-                    "date_range": "",
+                    "start_date": "",
+                    "end_date": "",
                     "bullet_points": ["impact-driven bullet 1", "achievement bullet 2", "technical bullet 3"]
                 }}
             ],
@@ -166,6 +169,9 @@ class GPTLLM(LLMInterface):
         Projects: {json.dumps(user_data['project_experience'], indent=2)}
         
         Generate a compelling cover letter that connects the applicant's experience to this specific role and company.
+        The writing needs to be professional, yet human. tapping into the candidate's forte and strength points and positioning the candiate to be a top applicant for the job and the company.
+
+        Write and return the letter content only, skip greetings, info, signature or anything other than the letter itself.
         """
         
         return self._call_gpt(system_prompt, user_prompt)
