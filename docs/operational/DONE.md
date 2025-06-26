@@ -49,3 +49,8 @@ Jun 24 2025
 - Added resume dependencies (altacv.cls, pubs-num.tex)
 - Compiled a full resume PDf, with all elements, sections and points. (The north-star is a just a few steps away, I see it already)
 
+
+Jun 26 2025
+- Refactored whole DB operations, separated concerns to: UserRepository, JobApplicationRepository, DatabaseManager, DatabaseSchemaManager, DatabaseDataValidator and DBConnectionManager
+- Added DB test suite (Ran Unit tests and verified, remaining to verify integration and e2e)
+- Designed a Thread-safe singleton state manager, WIP
