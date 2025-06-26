@@ -41,3 +41,11 @@ Jun 21 2025
 - Debugged latex compilation to PDF, verified cover letter generation. done. (yes, we are that close to the north star)
 - updated sql db workflow, WIP.
 - Added two cases to the e2e testing suite for DocumentService.
+
+Jun 24 2025
+- Fixed Resume Template, so that all placeholders are correctly named, line breaks are correctly rendered and elements are correctly stacked.
+- Fixed faulty parameters in latex generator
+- Fixed faulty parameters in LLM return (for the four providers)
+- Added resume dependencies (altacv.cls, pubs-num.tex)
+- Compiled a full resume PDf, with all elements, sections and points. (The north-star is a just a few steps away, I see it already)
+
