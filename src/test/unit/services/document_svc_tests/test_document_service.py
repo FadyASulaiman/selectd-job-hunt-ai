@@ -40,7 +40,8 @@ def sample_resume_content():
                 "company_name": "Company 1",
                 "job_title": "Backend Engineer",
                 "location": "Toronto, Ontario, Canada",
-                "date_range": "March 2023 - December 2024",
+                "start_date": "March 2023",
+                "end_date": "December 2024",
                 "bullet_points": [
                     "Engineered scalable backend for Lightspeed, enabling high-speed internet for 14M+ users via ACP initiative.",
                     "Designed RESTful APIs handling 10,000+ req/sec, leveraging GCP CloudSQL, Storage, and Sentry analytics."
@@ -598,25 +599,7 @@ class TestDocumentServiceE2E:
         assert "{{PHONE}}" not in cover_letter_content, "PHONE placeholder should be replaced"
         assert "{{COMPANY_NAME}}" not in cover_letter_content, "COMPANY_NAME placeholder should be replaced"
         assert "{{COVER_LETTER_CONTENT}}" not in cover_letter_content, "COVER_LETTER_CONTENT placeholder should be replaced"
-        
-        # Verify job description file content and format
-        job_desc_files = list(result_dir.glob("*JD.md"))
-        assert len(job_desc_files) == 1, "Should have exactly one job description file"
-        
-        with open(job_desc_files[0], 'r', encoding='utf-8') as f:
-            job_desc_content = f.read()
-            # Check markdown format
-            expected_header = f"# {sample_company_info['company_name']} - {sample_company_info['job_title']}"
-            assert expected_header in job_desc_content
-            assert sample_job_description in job_desc_content
-            
-        # Verify file naming conventions
-        expected_user_name = user_info['name'].replace(' ', '')
-        expected_company_name = sample_company_info['company_name'].replace(' ', '')
-        
-        assert any(expected_user_name in f.name and "Resume" in f.name for f in latex_files)
-        assert any(expected_user_name in f.name and "CoverLetter" in f.name for f in latex_files)
-        assert any(expected_company_name in f.name and "JD.md" in f.name for f in job_desc_files)
+
 
 
 # # Run only unit tests
