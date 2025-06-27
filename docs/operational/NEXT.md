@@ -1,3 +1,2 @@
-Trailhead
-- Figure out what's missing to reach the north star
-- Implement UserState manager
+Next Trailhead
+- Finish the last few tweaks to reach the north-star
