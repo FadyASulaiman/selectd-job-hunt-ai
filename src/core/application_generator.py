@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Optional, Dict, Any
 from dataclasses import dataclass
 
-from core.database.database import DatabaseManager
+from core.database.database_manager import DatabaseManager
 from core.services.document_service import DocumentService
 from core.services.job_analysis_service import JobAnalysisService
 from core.services.user_data_service import UserDataService
