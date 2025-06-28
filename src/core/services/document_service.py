@@ -31,12 +31,13 @@ class DocumentService:
         cover_letter: str,
         user_data: Dict[str, Any],
         company_info: Dict[str, Any],
-        job_description: str
+        job_description: str,
+        application_id: str
     ) -> Path:
         """Generate complete application package"""
         try:
             # Create output directory
-            output_dir = self._create_application_output_directory(company_info)
+            output_dir = self._create_application_output_directory(company_info, application_id)
             
             # Generate resume documents
             self._generate_resume_files(resume_content, user_data, company_info, output_dir)
@@ -54,13 +55,13 @@ class DocumentService:
             raise
 
     
-    def _create_application_output_directory(self, company_info: Dict[str, Any]) -> Path:
+    def _create_application_output_directory(self, company_info: Dict[str, Any], application_id: str) -> Path:
         """Create output directory for full application"""
         date_str = datetime.now().strftime("%m-%d-%y")
         company_name = company_info.get('company_name', 'Unknown').replace(' ', '-')
         job_title = company_info.get('job_title', 'Position').replace(' ', '-')
         
-        dir_name = f"{date_str}-{company_name}-{job_title}"
+        dir_name = f"app_{application_id}-{date_str}-{company_name}-{job_title}"
         output_dir = Path(os.path.join(Settings.APPLICATIONS_DIR, dir_name))
         output_dir.mkdir(parents=True, exist_ok=True)
         
