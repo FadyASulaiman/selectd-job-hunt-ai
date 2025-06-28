@@ -1,2 +1,2 @@
 Next Trailhead
-- Finish the last few tweaks to reach the north-star
+- We reached the north star, tweak the final bit and apply to 10 openings using the system for real world testing. 

@@ -59,3 +59,11 @@ Jun 27 2025
 - Implemented user state management, that is thread safe and singleton based (not for the MVP)
 - Created and ran prod tests for the DB operations, refined and debugged the related code
 - Created an e2e test for the full application generation workflow, needs very few tweaks to run seamlessly end-to-end
+
+Jun 28 2025
+- Add project link (Github, Docs, Live Demo, ...) handling in resume template and in LLM return
+- Add certifications and courses to resume output and template
+- Tweaked the prompt for GPT and the return JSON
+- Ran and verified the end-to-end application generation workflow
+- updated output dirctory naming to include application ID (in the DB)
+- Generated 10 real applications with actual LLM calls and file outputs (WE REACHED THE NORTH STAR)
