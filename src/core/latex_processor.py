@@ -130,10 +130,11 @@ class LaTeXProcessor:
             if isinstance(project, dict):
                 converted_project = {
                     'project_title': project.get('project_name', ''),
-                    'documentation_link': project.get('documentation_link', ''),
-                    'github_link': project.get('github_link', ''),
-                    'live_link': project.get('live_link', ''),
-                    'demo_link': project.get('demo_link', ''),
+                    'project_links': project.get('project_links', []),
+                    # 'documentation_link': project.get('documentation_link', ''),
+                    # 'github_link': project.get('github_link', ''),
+                    # 'live_link': project.get('live_link', ''),
+                    # 'demo_link': project.get('demo_link', ''),
                     'project_description': project.get('bullet_points', []),
                     'project_stack': project.get('project_stack', [])
 
