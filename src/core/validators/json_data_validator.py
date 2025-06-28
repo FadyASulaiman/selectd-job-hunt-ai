@@ -1,4 +1,3 @@
-import jsonschema
 from typing import Dict, Any
 from jsonschema import validate, ValidationError
 
