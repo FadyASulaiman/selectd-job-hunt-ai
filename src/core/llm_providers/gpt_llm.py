@@ -1,4 +1,5 @@
 import json
+import logging
 import time
 import openai
 from openai import OpenAI
@@ -17,6 +18,8 @@ class GPTLLM(LLMInterface):
         self.max_retries = 3
         self.max_output_tokens = 3000
 
+        self.logger = logging.getLogger(__name__)
+
 
     def _call_gpt(self, system_prompt: str, user_prompt: str, temperature: float = 0.4) -> str:
         """Make API call to GPT"""
@@ -34,6 +37,7 @@ class GPTLLM(LLMInterface):
                 )
                 
                 print(response) # debug : remove
+                self.logger.info(f"{response}")
                 
                 # Extract the content of the response
                 return response.output_text
@@ -48,7 +52,7 @@ class GPTLLM(LLMInterface):
         """Extract job information with GPT-4.1's strong comprehension."""
         system_prompt = ("You are an expert job description analyst. "
         "Extract key information and respond with ONLY a valid JSON object. "
-        "No explanations, no markdown, no code blocks.")
+        "No explanations, no markdown, no code blocks and no line breaks or new lines).")
         
         user_prompt = f"""
         Parse this job description and extract information as JSON:
@@ -86,9 +90,12 @@ class GPTLLM(LLMInterface):
             f"- First project: max {Settings.MAX_BULLET_POINTS_FIRST_PROJECT} bullets\n"
             f"- Other projects: max {Settings.MAX_BULLET_POINTS_OTHER_PROJECTS} bullets\n"
             f"- Max {Settings.MAX_WORDS_PER_BULLET} words per bullet\n"
+            f"- Include all project links"
             f"- Never invent facts - only enhance and optimize existing content\n"
             f"- Make every word count for maximum impact\n"
             f"- Use action verbs and quantifiable results\n"
+            f"- Escape these characters: [% &] using a single backslash (ex: % -> \%)"
+            f"- Return certifications as is."
         )
 
         user_prompt = f"""
@@ -98,9 +105,9 @@ class GPTLLM(LLMInterface):
         CANDIDATE DATA:
         {json.dumps(user_data, indent=2)}
         
-        Generate an optimized resume JSON with this exact structure:
+        Generate an optimized resume JSON with this exact structure, without adding any extra markings, line breaks or anything rather than the json keys and values:
         {{
-            "executive_summary": "compelling 150-word summary showcasing perfect fit",
+            "executive_summary": "compelling 140-word summary showcasing perfect fit for the position",
             "selected_work_experience": [
                 {{
                     "company_name": "",
@@ -116,17 +123,17 @@ class GPTLLM(LLMInterface):
                     "project_name": "",
                     "project_stack": "",
                     "bullet_points": ["technical achievement", "business impact", "innovation highlight"],
-                    "documentation_link": "",
-                    "github_link": "",
-                    "demo_link": "",
-                    "live_link": ""
+                    "project_links": [
+                        {{"name": "<link name. ex: Documentation, GitHub, Live Demo, Video Demo, ...>", "link": ""}},
+                    ]
                 }}
             ],
             "relevant_skills": {{
                 "technical": ["prioritized technical skills"],
                 "machine_learning": ["ML expertise"],
                 "tools": ["relevant tools"]
-            }}
+            }},
+            "certifications": ""
         }}
         """
         
@@ -171,7 +178,7 @@ class GPTLLM(LLMInterface):
         Generate a compelling cover letter that connects the applicant's experience to this specific role and company.
         The writing needs to be professional, yet human. tapping into the candidate's forte and strength points and positioning the candiate to be a top applicant for the job and the company.
 
-        Write and return the letter content only, skip greetings, info, signature or anything other than the letter itself.
+        Write and return the letter content only, skip greetings, info, signature, text marking or anything other than the letter itself.
         """
         
         return self._call_gpt(system_prompt, user_prompt)
@@ -183,6 +190,8 @@ class GPTLLM(LLMInterface):
             cleaned = cleaned.split('```json')[1].split('```')[0]
         elif '```' in cleaned:
             cleaned = cleaned.split('```')[1].split('```')[0]
+        if '\n' in cleaned:
+            cleaned = cleaned.replace('\n', '')
         return cleaned.strip()
     
     def _fallback_job_info(self) -> dict:
