@@ -80,7 +80,7 @@ class ApplicationGenerator:
             
             # Generate all documents
             output_dir = self.document_service.generate_application_package(
-                resume_content, cover_letter, user_data, company_info, job_description
+                resume_content, cover_letter, user_data, company_info, job_description, app_id
             )
             
             return ApplicationResult(
