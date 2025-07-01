@@ -70,10 +70,11 @@
 \cvevent{}{((( project.project_title )))}{}{}
 ((*- if project.project_links +*))
 ((*- for link in project.project_links +*))
-\cvtag{((( link.name ))): \href{((( link.link )))}{((( link.link )))}%
+\cvtag{\href{((( link.link )))}{((( link.name )))}%
 }
 ((*- endfor +*))
 ((*- endif +*))
+
 ((*- if project.project_description +*))
 \begin{itemize}
 ((*- for desc in project.project_description +*))
@@ -89,7 +90,7 @@
 \cvsection{Experience}
 
 ((*- for exp in work_experience +*))
-\cvevent{((( exp.role_title )))}{((( exp.company_name )))}{((( exp.working_from ))) -- ((*- if exp.working_to +*))((( exp.working_to )))((*- else +*))Present((*- endif +*))}{((*- if exp.company_location +*))((( exp.company_location )))((*- endif +*))}
+\cvevent{((( exp.role_title )))}{[((( exp.company_name )))]}{((( exp.working_from ))) -- ((*- if exp.working_to +*))((( exp.working_to )))((*- else +*))Present((*- endif +*))}{((*- if exp.company_location +*))((( exp.company_location )))((*- endif +*))}
 ((*- if exp.experience +*))
 \begin{itemize}
 ((*- for item in exp.experience +*))
