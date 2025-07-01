@@ -10,7 +10,7 @@ class Settings:
     # LLM API config
     MODEL_PROVIDERS = {
         'openai': {'model':'gpt-4.1', 'small_model':'gpt-4.1-nano', 'key': os.environ.get('OPENAI_API_KEY', '')}, 
-        'google': {'model': 'gemini-2.5-flash-preview-04-17', 'small_model':'gemini-2.5-flash-preview-04-17', 'key': os.environ.get('GEMINI_API_KEY', '')},
+        'google': {'model': 'gemini-2.5-pro', 'small_model':'gemini-2.5-flash-lite-preview-06-17', 'key': os.environ.get('GEMINI_API_KEY', '')},
         'deepseek': {'model':'deepseek-reasoner', 'small_model':'deepseek-chat', 'key': os.environ.get('DEEPSEEK_API_KEY', '')},
         'anthropic': {'model': 'claude-sonnet-4', 'key': ''} }
 
