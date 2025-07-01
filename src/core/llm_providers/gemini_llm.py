@@ -4,14 +4,18 @@ from google.genai import types
 from google import genai
 from config.settings import Settings
 from core.llm_providers.llm_interface import LLMInterface
+from llm_prompts.llm_prompts import LLMPrompts
 
 class GeminiLLM(LLMInterface):
     """Gemini API implementation"""
 
-    def __init__(self, model: str):
+    def __init__(self, model: str, prompts: LLMPrompts = None):
         
         self.model_name = model
         self.client = genai.Client(api_key=Settings.MODEL_PROVIDERS['google']['key'])
+
+        # Inject prompts dependency
+        self.prompts = prompts or LLMPrompts()
 
 
     def _call_gemini(self, system_prompt: str, user_prompt: str, thinking_budget: Optional[int] = None) -> str:
@@ -32,136 +36,74 @@ class GeminiLLM(LLMInterface):
         except Exception as e:
             raise Exception(f"Gemini API error: {str(e)}")
 
-    def extract_job_info(self, job_description: str) -> dict:
-        """Extract company and job information from job description"""
-        system_prompt = """You are an expert at parsing job descriptions with exceptional attention to detail. Extract key information and return ONLY a valid JSON object with no additional text, markdown formatting, or code blocks."""
-        
-        user_prompt = f"""
-        Extract the following information from this job description and return as JSON:
-        - company_name (string)
-        - job_title (string)
-        - location (string, if provided, otherwise "Not specified")
-        - salary_range (string, if provided, otherwise "Not specified")
-        - job_type (string, e.g., "Full-time", "Part-time", "Contract", or "Not specified")
-        - benefits (string delimited by a slash)
-        - country (string, if determinable, otherwise "Not specified")
 
-        Job Description:
-        {job_description}
-        
-        Return only the JSON object:
-        """
+    def extract_job_info(self, job_description: str) -> dict:
+        """Extract job information"""
+        system_prompt = self.prompts.get_job_extraction_system_prompt()
+        user_prompt = self.prompts.get_job_extraction_user_prompt(job_description)
         
         response = self._call_gemini(system_prompt, user_prompt, thinking_budget=0)
-        print(response) # debug: remove
         try:
-            # Clean the response to ensure valid JSON, as LLMs can sometimes include markdown.
-            cleaned_response = response.strip()
-            if cleaned_response.startswith('```'):
-                cleaned_response = cleaned_response.split('\n', 1)[1].rsplit('\n', 1)[0]
+            cleaned_response = self._clean_json_response(response)
             return json.loads(cleaned_response)
         except json.JSONDecodeError:
             return self._fallback_job_info()
-    
+        
+
     def generate_resume_content(self, job_description: str, user_data: dict) -> dict:
-        """Generate tailored resume content"""
-        system_prompt = f"""You are an elite career strategist with deep expertise in ML/Data Science recruitment. You understand what recruiters look for and optimize resumes for both ATS systems and human reviewers.
-
-CRITICAL CONSTRAINTS:
-- Maximum {Settings.MAX_WORK_EXPERIENCE} work experience blocks
-- Maximum {Settings.MAX_PROJECT_EXPERIENCE} project experience blocks  
-- First project: max {Settings.MAX_BULLET_POINTS_FIRST_PROJECT} bullet points
-- Other projects: max {Settings.MAX_BULLET_POINTS_OTHER_PROJECTS} bullet points
-- Maximum {Settings.MAX_WORDS_PER_BULLET} words per bullet point
-- NEVER fabricate information - only rephrase/optimize provided content
-- Prioritize experiences based on relevance to job description
-- Include ATS-friendly keywords from job description
-- Focus on quantifiable achievements
-
-For experience selection:
-- If priority_ranking = 0, select most relevant experiences automatically
-- If priority_ranking > 0, respect the ranking (1 = highest priority)
-
-Return ONLY a valid JSON object with no additional text."""
-
-        user_prompt = f"""
-        Job Description:
-        {job_description}
-        
-        User Data:
-        {json.dumps(user_data, indent=2)}
-        
-        Generate optimized resume content as JSON with this exact structure:
-        {{
-            "executive_summary": "tailored summary (max 150 words)",
-            "selected_work_experience": [
-                {{
-                    "company_name": "",
-                    "job_title": "", 
-                    "location": "",
-                    "start_date": "",
-                    "end_date": "",                 
-                    "bullet_points": ["optimized bullet 1", "optimized bullet 2", "optimized bullet 3"]
-                }}
-            ],
-            "selected_project_experience": [
-                {{
-                    "project_name": "",
-                    "project_stack": "",
-                    "bullet_points": ["optimized bullet 1", "optimized bullet 2", "optimized bullet 3"],
-                    "documentation_link": "",
-                    "github_link": "",
-                    "demo_link": "",
-                    "live_link": ""
-                }}
-            ],
-            "relevant_skills": {{
-                "technical": ["skill1", "skill2"],
-                "machine_learning": ["skill1", "skill2"],
-                "tools": ["tool1", "tool2"]
-            }}
-        }}
-        """
+        """Generate resume content """
+        system_prompt = self.prompts.get_resume_generation_system_prompt()
+        user_prompt = self.prompts.get_resume_generation_user_prompt(job_description, user_data)
         
         response = self._call_gemini(system_prompt, user_prompt)
         try:
-            cleaned_response = response.strip()
-            if cleaned_response.startswith('```'):
-                cleaned_response = cleaned_response.split('\n', 1)[1].rsplit('\n', 1)[0]
+            cleaned_response = self._clean_json_response(response)
             return json.loads(cleaned_response)
         except json.JSONDecodeError as e:
-            raise Exception(f"Failed to parse resume content JSON: {str(e)}")
-    
+            raise Exception(f"Failed to parse GPT-4.1 resume JSON: {str(e)}")
+
+
+
     def generate_cover_letter(self, job_description: str, user_data: dict, company_info: dict) -> str:
         """Generate compelling cover letter"""
-        system_prompt = """You are an expert cover letter writer for ML/Data Science positions. Write compelling, personalized cover letters that:
-- Show genuine interest in the specific company and role
-- Highlight relevant experience and achievements
-- Demonstrate cultural fit
-- Are concise yet impactful (300-400 words)
-- Use a professional but engaging tone
-- Include specific examples and quantifiable results"""
+        system_prompt = self.prompts.get_cover_letter_system_prompt()
+        user_prompt = self.prompts.get_cover_letter_user_prompt(job_description, user_data, company_info)
+        
+        response = self._call_gemini(system_prompt, user_prompt)
+        try:
+            cleaned_response = self._clean_json_response(response)
+            cleaned_response = cleaned_response.replace('&', '\&').replace('%', '\%')
+            return cleaned_response
+        except Exception as e:
+            raise Exception(f"Failed to parse GPT cover letter content: {str(e)}")
 
-        user_prompt = f"""
-        Write a cover letter for this application:
+
+    def _clean_json_response(self, response: str) -> str:
+        """Clean and prepare response text for reliable JSON parsing."""
+        # Remove markdown code blocks
+        cleaned = response.strip()
+        if '```json' in cleaned:
+            cleaned = cleaned.split('```json')[1].split('```')[0]
+        elif '```' in cleaned:
+            cleaned = cleaned.split('```')[1].split('```')[0]
         
-        Job Description:
-        {job_description}
+        # Remove newlines and normalize whitespace
+        cleaned = cleaned.replace('\n', ' ').replace('\r', ' ')
+        cleaned = ' '.join(cleaned.split())
         
-        Company Info:
-        {json.dumps(company_info, indent=2)}
+        # Fix common JSON issues
+        import re
+        cleaned = re.sub(r',(\s*[}\]])', r'\1', cleaned)
         
-        Applicant Info:
-        {json.dumps(user_data['applicant_info'], indent=2)}
+        def fix_quotes_in_strings(match):
+            content = match.group(1)
+            content = re.sub(r'(?<!\\)"', r'\\"', content)
+            return f'"{content}"'
         
-        Relevant Experience:
-        Work: {json.dumps(user_data['work_experience'], indent=2)}
-        Projects: {json.dumps(user_data['project_experience'], indent=2)}
+        cleaned = re.sub(r'"([^"]*(?:\\"[^"]*)*)"(?=\s*[,\]}])', fix_quotes_in_strings, cleaned)
         
-        Generate a compelling cover letter that connects the applicant's experience to this specific role and company.
-        """
-        
-        return self._call_gemini(system_prompt, user_prompt)
+        return cleaned.strip()
+
 
     def _fallback_job_info(self) -> dict:
         """Fallback job info when parsing fails"""
