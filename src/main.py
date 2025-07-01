@@ -7,13 +7,6 @@ from config.settings import Settings
 def main():
     """Main entry point for the application"""
     
-    # Check for Claude API key
-    if not Settings.CLAUDE_API_KEY:
-        print("ERROR: Claude API key not found!")
-        print("Please set the CLAUDE_API_KEY environment variable:")
-        print("export CLAUDE_API_KEY='your-api-key-here'")
-        sys.exit(1)
-    
     # Setup directories
     Settings.setup_directories()
     
