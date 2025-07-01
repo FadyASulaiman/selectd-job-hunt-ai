@@ -2,9 +2,8 @@
 import tkinter as tk
 from tkinter import ttk, scrolledtext, messagebox
 import threading
-from core.application_generator import ApplicationGenerator
-from core.database.database import DatabaseManager
-from core.resume_generator import ResumeGenerator
+from core.application_generator import ApplicationGenerator, ApplicationResult
+from core.database.database_manager import DatabaseManager
 from core.services.document_service import DocumentService
 from core.services.job_analysis_service import JobAnalysisService
 from core.services.user_data_service import UserDataService
@@ -56,7 +55,7 @@ class MainWindow:
                                     values=list(self.dropdown_options.keys()),
                                     state="readonly", width=20)
         self.dropdown.grid(row=0, column=1, sticky=tk.W)
-        self.dropdown.set("One")  # Set default selection
+        self.dropdown.set("GPT-4.1")  # Set default selection
         
         # Job description input
         jd_frame = ttk.LabelFrame(main_frame, text="Job Description", padding="5")
@@ -180,17 +179,17 @@ class MainWindow:
             error_result = {'success': False, 'error': str(e)}
             self.root.after(0, self.on_generation_complete, error_result)
     
-    def on_generation_complete(self, result: dict):
+    def on_generation_complete(self, result: ApplicationResult):
         """Handle generation completion"""
         # Stop progress and re-enable button
         self.progress.stop()
         self.generate_button.config(state=tk.NORMAL)
         
-        if result['success']:
+        if result.success:
             self.update_status("Generation completed successfully!", "green")
             
             # Format results
-            company_info = result['company_info']
+            company_info = result.company_info
             selected_option = self.dropdown_var.get()
             selected_code = self.get_selected_value_code()
             
@@ -199,16 +198,16 @@ class MainWindow:
 Company: {company_info.get('company_name', 'Unknown')}
 Position: {company_info.get('job_title', 'Unknown')}
 Location: {company_info.get('location', 'Not specified')}
-ATS Score: {result['ats_score']}%
+ATS Score: {result.ats_score}%
 
-Output Directory: {result['output_directory']}
+Output Directory: {result.output_directory}
 
 Files Generated:
 • Resume (LaTeX & PDF)
 • Cover Letter (LaTeX & PDF)  
 • Job Description (Markdown)
 
-Application ID: {result['application_id']}
+Application ID: {result.application_id}
 LLM Used: {selected_option} ({selected_code})
 """
             
@@ -216,12 +215,12 @@ LLM Used: {selected_option} ({selected_code})
             
             messagebox.showinfo("Success", 
                               f"Resume generated successfully!\nSelected: {selected_option}\n"
-                              f"ATS Score: {result['ats_score']}%\n"
-                              f"Files saved to: {result['output_directory']}")
+                              f"ATS Score: {result.ats_score}%\n"
+                              f"Files saved to: {result.output_directory}")
         else:
             self.update_status("Generation failed", "red")
-            self.update_results(f"❌ Error: {result['error']}")
-            messagebox.showerror("Error", f"Generation failed: {result['error']}")
+            self.update_results(f"❌ Error: {result.error}")
+            messagebox.showerror("Error", f"Generation failed: {result.error}")
     
     def run(self):
         """Start the GUI application"""
