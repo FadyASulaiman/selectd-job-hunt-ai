@@ -1,11 +1,11 @@
-# 🚀 Selectd Job Hunt AI
+# 🚀 Selectd-Lite Job Hunt AI
 
 *The no-BS open-source resume tailoring system for Tech professionals*
 
-[[License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[[Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[[LaTeX](https://img.shields.io/badge/LaTeX-PDF%20Generation-green.svg)](https://www.latex-project.org/)
-[[Claude API](https://img.shields.io/badge/Powered%20by-Claude%203.5%20Sonnet-purple.svg)](https://www.anthropic.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![LaTeX](https://img.shields.io/badge/LaTeX-PDF%20Generation-green.svg)](https://www.latex-project.org/)
+
 
 ## 📋 Table of Contents
 - [Overview](#overview)
@@ -132,7 +132,7 @@ Unlike generic resume builders, this system understands the nuances of roles in 
 ### **Prerequisites**
 - Python 3.8+ 
 - LaTeX distribution (MiKTeX, TeX Live, or MacTeX)
-- Claude API key from Anthropic
+- OpenAI API key (Or Google or Deepseek, all implemented, your pick!)
 
 ### **LaTeX Installation**
 
@@ -172,11 +172,10 @@ sudo pacman -S texlive-most
 ### **Python Dependencies**
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/ai-resume-automation.git
-cd ai-resume-automation
+git clone 
 
 # Install dependencies
-pip install anthropic
+pip install openai
 
 # Verify LaTeX installation
 pdflatex --version
@@ -185,13 +184,13 @@ pdflatex --version
 ### **Environment Setup**
 ```bash
 # Set Claude API key
-export CLAUDE_API_KEY='your-claude-api-key-here'
+export OPENAPI_API_KEY='your-openai-api-key-here'
 
 # Windows PowerShell
-$env:CLAUDE_API_KEY = 'your-claude-api-key-here'
+$env:OPENAPI_API_KEY = 'your-openai-api-key-here'
 
 # Windows Command Prompt
-set CLAUDE_API_KEY=your-claude-api-key-here
+set OPENAPI_API_KEY=your-openai-api-key-here
 ```
 
 ## 🚀 Quick Start
@@ -263,9 +262,9 @@ MAX_WORDS_PER_BULLET = 30      # Word limit per bullet point
 ### **LLM Provider Configuration**
 ```python
 # Easy switching between LLM providers
-def get_llm_interface(provider: str = "claude") -> LLMInterface:
-    if provider.lower() == "claude":
-        return ClaudeLLM()
+def get_llm_interface(provider: str = "google") -> LLMInterface:
+    if provider.lower() == "google":
+        return GEMINILLM()
     elif provider.lower() == "openai":
         return OpenAILLM()  # Future implementation
     else:
@@ -294,51 +293,10 @@ CREATE TABLE job_applications (
 
 ## 📖 Usage
 
-### **Basic Workflow**
-```python
-from core.resume_generator import ResumeGenerator
-
-# Initialize generator
-generator = ResumeGenerator()
-
-# Generate application
-result = generator.generate_application(job_description)
-
-if result['success']:
-    print(f"ATS Score: {result['ats_score']}%")
-    print(f"Files saved to: {result['output_directory']}")
-else:
-    print(f"Error: {result['error']}")
-```
-
-#### **Custom LLM Provider**
-```python
-# Implement custom LLM provider
-class CustomLLM(LLMInterface):
-    def generate_resume_content(self, job_description, user_data):
-        # Custom implementation
-        pass
-
-# Use custom provider
-generator = ResumeGenerator(llm_provider="custom")
-```
-
-#### **Database Queries**
-```python
-from core.database import DatabaseManager
-
-db = DatabaseManager()
-
-# Get application statistics
-applications = db.get_applications_summary()
-for app in applications:
-    print(f"{app[0]} - {app[1]} - {app[3]}")  # Company, Role, Status
-```
-
 
 ### **Dependencies**
 ```txt
-anthropic>=0.25.0     # Claude API client
+anthropic>=0.25.0    # Claude API client
 openai               # OpenAI API client
 tkinter              # GUI framework (usually included with Python)
 sqlite3              # Database (included with Python)
@@ -356,27 +314,11 @@ threading            # Multi-threading support (included with Python)
 
 Contributions are truly welcome! I built this system to use during my job hunt and published it only in the hope that it would benefit others looking for a job, so, if you feel like you can add anything to improve this project, plase do not hesitate to do so.
 
-### **Development Setup**
-```bash
-# Fork and clone the repository
-git clone https://github.com/yourusername/ai-resume-automation.git
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install development dependencies
-pip install -r requirements-dev.txt
-
-# Run tests
-python -m pytest tests/
-```
-
 ### **Code Style**
 - Follow PEP 8 style guidelines
 - Use type hints where appropriate
 - Write comprehensive docstrings
-- Maintain test coverage >80%
+- Maintain test coverage >60%
 
 ### **Submitting Changes**
 1. Create a feature branch
@@ -389,6 +331,7 @@ python -m pytest tests/
 ## 📞 Contact
 
 - **Email**: Sulaiman.a.fady@gmail.com
+- **LinkedIn**: linkedin.com/in/fady-a-sulaiman-b1aaa1293
 
 ---
 
