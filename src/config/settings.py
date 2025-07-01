@@ -1,5 +1,5 @@
-# config/settings.py
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 import os
 
@@ -25,7 +25,7 @@ class Settings:
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     DATA_DIR = os.path.join(BASE_DIR, 'data')
     TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
-    APPLICATIONS_DIR = os.path.join(BASE_DIR, 'applications')
+    APPLICATIONS_DIR = os.path.join(str(Path(BASE_DIR).parent.parent), "job_hunt_of_twenty_twenty_five/job_applications")
     
     # Database
     DB_PATH = os.path.join(DATA_DIR, 'applications.db')
