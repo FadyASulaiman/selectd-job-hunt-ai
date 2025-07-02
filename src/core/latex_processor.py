@@ -127,15 +127,16 @@ class LaTeXProcessor:
         converted = []
 
         for project in projects:
+            desc = project.get('bullet_points', [])
+            escaped = []
+            for point in desc:
+                escaped.append(point.replace('%','\%').replace('&','\&'))
+
             if isinstance(project, dict):
                 converted_project = {
                     'project_title': project.get('project_name', ''),
                     'project_links': project.get('project_links', []),
-                    # 'documentation_link': project.get('documentation_link', ''),
-                    # 'github_link': project.get('github_link', ''),
-                    # 'live_link': project.get('live_link', ''),
-                    # 'demo_link': project.get('demo_link', ''),
-                    'project_description': project.get('bullet_points', []),
+                    'project_description': escaped,
                     'project_stack': project.get('project_stack', [])
 
                 }
@@ -147,6 +148,10 @@ class LaTeXProcessor:
         converted = []
 
         for exp in experience:
+            desc = exp.get('bullet_points', [])
+            escaped = []
+            for point in desc:
+                escaped.append(point.replace('%','\%').replace('&','\&'))
             if isinstance(exp, dict):
                 converted_exp = {
                     'company_name': exp.get('company_name', ''),
@@ -154,7 +159,7 @@ class LaTeXProcessor:
                     'working_from': exp.get('start_date', ''),
                     'working_to': exp.get('end_date', ''),
                     'role_title': exp.get('job_title', ''),
-                    'experience': exp.get('bullet_points', [])
+                    'experience': escaped
                 }
                 converted.append(converted_exp)
         return converted
@@ -242,7 +247,7 @@ class LaTeXProcessor:
                 'APPLICANT_PHONE': user_data.get('applicant_info', {}).get('phone', ''),
                 'COMPANY_NAME': company_info.get('company_name', ''),
                 'JOB_TITLE': company_info.get('job_title', ''),
-                'COVER_LETTER_CONTENT': cover_letter,
+                'COVER_LETTER_CONTENT': cover_letter.replace('—', ', '),
             }
             
             return template.render(**template_data)
