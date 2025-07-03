@@ -61,7 +61,8 @@ class DocumentService:
         company_name = company_info.get('company_name', 'Unknown').replace(' ', '-')
         job_title = company_info.get('job_title', 'Position').replace(' ', '-')
         
-        dir_name = f"app_{application_id}-{date_str}-{company_name}-{job_title}"
+        dir_name = f"app_{application_id}-{date_str}-{company_name}-{job_title}".replace('/','').replace('&','')
+
         output_dir = Path(os.path.join(Settings.APPLICATIONS_DIR, dir_name))
         output_dir.mkdir(parents=True, exist_ok=True)
         
