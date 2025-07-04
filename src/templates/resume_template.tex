@@ -30,8 +30,6 @@
 \renewcommand{\cvItemMarker}{{\small\textbullet}}
 \renewcommand{\cvRatingMarker}{\faCircle}
 
-\input{pubs-num.tex}
-
 \begin{document}
 
 \name{((( name )))}
@@ -64,7 +62,7 @@
 \AtBeginEnvironment{itemize}{\small}
 
 ((*- if projects +*))
-\cvsection{Notable ML Projects}
+\cvsection{ML Projects}
 
 ((*- for project in projects +*))
 \cvevent{}{((( project.project_title )))}{}{}
