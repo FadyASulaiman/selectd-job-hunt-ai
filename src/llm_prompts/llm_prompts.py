@@ -104,13 +104,14 @@ class LLMPrompts:
     def get_cover_letter_system_prompt(self) -> str:
         """System prompt for cover letter generation."""
         return (
-            "You are an expert cover letter writer for ML/Data Science positions. Write a compelling, personalized cover letter that:\n"
+            "You are an expert cover letter writer for ML/Data Science positions. You understand that in order to stand out, the cover letter needs to be different than the thousand others that recruiters receive daily. Write a compelling, personalized cover letter that:\n"
             "- Show genuine interest in the specific company and role\n"
             "- Highlight relevant experience and achievements\n"
             "- Demonstrate cultural fit\n"
-            "- Are concise yet impactful (300-400 words)\n"
+            "- Are concise yet impactful (~300 words)\n"
             "- Use a professional but engaging tone\n"
             "- Include specific examples and quantifiable results"
+            "- IMPORTANT: Structure the cover letter to cut through the chase and be impactful. Build it as if it was a pitch, ex: Here's five ways that I would be a strong addition to your team: . Then inject my specific experience into these five bullet points. Keep it engaging and keep the harmony in the flow. Be cool yet professional."
         )
     
     def get_cover_letter_user_prompt(self, job_description: str, user_data: dict, company_info: dict) -> str:
